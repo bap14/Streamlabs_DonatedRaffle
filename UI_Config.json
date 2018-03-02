@@ -1,0 +1,300 @@
+{
+  "output_file": "settings.json",
+  "Prize": {
+    "type": "textbox",
+    "value": "",
+    "label": "Prize",
+    "tooltip": "Raffle Prize",
+    "group": "General"
+  },
+  "Command": {
+    "type": "textbox",
+    "value": "!raffle",
+    "label": "Chat Command",
+    "tooltip": "Command chat uses to enter raffle",
+    "group": "General"
+  },
+  "Permission": {
+    "type": "dropdown",
+    "value": "Everyone",
+    "items": [
+          "Everyone", "Regular", "Subscriber", "GameWisp Subscriber", "User_Specific", "Min_Rank", "Min_Points",
+          "Min_Hours", "Moderator", "Editor", "Caster"
+    ],
+    "label": "Permission To Enter",
+    "tooltip": "Minimum user level to enter raffle",
+    "group": "General"
+  },
+  "PermissionInfo": {
+    "type": "textbox",
+    "value": "",
+    "label": "Permission Info",
+    "tooltip": "Set the user, rank or tier for selected permission (if applicable)",
+    "group": "General"
+  },
+  "EntryCost": {
+    "type": "numberbox",
+    "value": 100,
+    "label": "Cost Per Entry",
+    "tooltip": "Amount of currency per entry to remove",
+    "group": "Raffle Settings"
+  },
+  "MaxPersonalEntries": {
+    "type": "numberbox",
+    "value": 1,
+    "label": "Maximum Entries",
+    "tooltip": "Maximum number of entries for self-entry, also maximum allowed to donate per-person",
+    "group": "Raffle Settings"
+  },
+  "EnableDonations": {
+    "type": "checkbox",
+    "value": false,
+    "label": "Allow Donating Tickets",
+    "tooltip": "Allow viewers to purchase tickets for other viewers",
+    "group": "Raffle Settings"
+  },
+  "AllowMultipleDonations": {
+    "type": "checkbox",
+    "value": false,
+    "label": "Allow Multiple Donations",
+    "tooltip": "Allow viewers to donate to multiple people",
+    "group": "Raffle Settings"
+  },
+  "IsRaffleTimed": {
+    "type": "checkbox",
+    "value": false,
+    "label": "Enable Timer",
+    "tooltip": "",
+    "group": "Raffle Settings"
+  },
+  "RaffleTimerDuration": {
+    "type": "numberbox",
+    "value": 300,
+    "label": "Raffle Entry Period",
+    "tooltip": "Number of seconds raffle entries will be allowed",
+    "group": "Raffle Settings"
+  },
+  "IsCurrencyGiveaway": {
+    "type": "checkbox",
+    "value": false,
+    "label": "Give Currency As Prize?",
+    "tooltip": "Winners will automatically receive `Currency Giveaway Amount` as the reward",
+    "group": "Raffle Settings"
+  },
+  "CurrencyGiveawayAmount": {
+    "type": "numberbox",
+    "value": 1000,
+    "label": "Currency Giveaway Amount",
+    "tooltip": "Amount of currency to give to winners",
+    "group": "Raffle Settings"
+  },
+  "Message_RaffleOpen": {
+    "type": "textbox",
+    "value": "A raffle for: {0} has started! {1} can enter!",
+    "label": "Raffle Open",
+    "tooltip": "Message announcing an open raffle in chat",
+    "group": "Messages"
+  },
+  "Message_RaffleOpenUnlimitedEntry": {
+    "type": "textbox",
+    "value": "[Entry Cost: {0}] - Use `{1} <number>` to enter",
+    "label": "Raffle Open (Unlimited Entries)",
+    "tooltip": "Message announcing an open raffle, with unlimited entries, in chat",
+    "group": "Messages"
+  },
+  "Message_RaffleOpenLimitedEntry": {
+    "type": "textbox",
+    "value": "Entry Cost: {0} - Maximum Entries: {1} - Use `{2} <number>` to enter",
+    "label": "Raffle Open (with Max Tickets)",
+    "tooltip": "Message announcing an open raffle, with maximum entries, in chat",
+    "group": "Messages"
+  },
+  "Message_RaffleOpenDonateEntry": {
+    "type": "textbox",
+    "value": "or `{0} <number> <username>` to donate entries to someone.",
+    "label": "Donate Tickets",
+    "tooltip": "Included with raffle open message: instructions on how to donate tickets",
+    "group": "Messages"
+  },
+  "Message_RaffleClosed": {
+    "type": "textbox",
+    "value": "Entries have stopped for the raffle! You can no longer enter!",
+    "label": "Raffle Closed",
+    "tooltip": "Message announcing closing of a raffle",
+    "group": "Messages"
+  },
+  "Message_RaffleRefunded": {
+    "type": "textbox",
+    "value": "All {0} has been refunded for the current raffle.",
+    "label": "Raffle Refunded",
+    "tooltip": "Message announcing refund of a raffle",
+    "group": "Messages"
+  },
+  "Message_Winner": {
+    "type": "textbox",
+    "value": "@{0}, you have won! Speak up in chat!",
+    "label": "Raffle Winner Notification",
+    "tooltip": "Message to announce winner in chat",
+    "group": "Messages"
+  },
+  "Message_NotEnoughCurrency": {
+    "type": "textbox",
+    "value": "@{0} you don't have enough {1}!",
+    "label": "Not Enough Currency",
+    "tooltip": "Response to user(s) when they don't have enough currency to purchase the number of tickets",
+    "group": "Error Messages"
+  },
+  "Message_MaxEntriesExceeded": {
+    "type": "textbox",
+    "value": "@{0} You are only able to purchase up to {1} entries.",
+    "label": "Maximum Tickets Response",
+    "tooltip": "Response message if user tries to purchase too many tickets",
+    "group": "Error Messages"
+  },
+  "Message_MultipleDonationsDisabled": {
+    "type": "textbox",
+    "value": "@{0}, you can only donate entries to one person.",
+    "label": "Multiple Donations Disabled",
+    "tooltip": "Response to send when user tries to donate to more than one person and 'Allow Multiple Donations' is disabled",
+    "group": "Error Messages"
+  },
+  "Message_DonationsDisabled": {
+    "type": "textbox",
+    "value": "@{0}, donating entries is not enabled.",
+    "label": "Entry Donations Disabled",
+    "tooltip": "Message explaining that donations are not enabled for this raffle.",
+    "group": "Error Messages"
+  },
+  "Message_DonateToSelfDisallowed": {
+    "type": "textbox",
+    "value": "You cannot donate entires to yourself.",
+    "label": "Can Not Donate To Self Notification",
+    "tooltip": "Message explaining that you can not donate entries to yourself",
+    "group": "Error Messages"
+  },
+  "Message_CloseBeforeChoosing": {
+    "type": "textbox",
+    "value": "You must close the raffle before choosing winners.",
+    "label": "Close Raffle Before Picking Winners Notification",
+    "tooltip": "Message explaining that the raffle needs to be closed before choosing winners",
+    "group": "Error Messages"
+  },
+  "Message_NoEntrantsFound": {
+    "type": "textbox",
+    "value": "There are no entrants to choose from.",
+    "label": "No Entrants Notification",
+    "tooltip": "No raffle entries to choose from message",
+    "group": "Error Messages"
+  },
+  "Manage_Command": {
+    "type": "textbox",
+    "value": "!manageraffle",
+    "label": "Raffle Management Command",
+    "tooltip": "Command used to manage a raffle",
+    "group": "Management"
+  },
+  "Manage_Permission": {
+    "type": "dropdown",
+    "value": "Editor",
+    "items": ["Everyone","Regular","Subscriber","GameWisp Subscriber","User_Specific","Min_Rank","Min_Points","Min_Hours","Moderator","Editor","Caster"],
+    "label": "Permission Level",
+    "tooltip": "Minimum user level to allow management",
+    "group": "Management"
+  },
+  "Manage_PermissionInfo": {
+    "type": "textbox",
+    "value": "",
+    "label": "Management Permission Info",
+    "tooltip": "Set the user, rank or tier for management permission",
+    "group": "Management"
+  },
+  "Manage_CloseKeyword": {
+    "type": "textbox",
+    "value": "close",
+    "label": "Keyword To Close Raffle",
+    "tooltip": "Keyword used to stop a raffle",
+    "group": "Management"
+  },
+  "Manage_OpenKeyword": {
+    "type": "textbox",
+    "value": "open",
+    "label": "Keyword To Open Raffle",
+    "tooltip": "Keyword used to start a raffle",
+    "group": "Management"
+  },
+  "Manage_PickKeyword": {
+    "type": "textbox",
+    "value": "pick",
+    "label": "Keyword To Pick Winner(s)",
+    "tooltip": "Keyword used to pick winner(s)",
+    "group": "Management"
+  },
+  "Manage_RefundKeyword": {
+    "type": "textbox",
+    "value": "refund",
+    "label": "Keyword To Refund Raffle",
+    "tooltip": "Keyword used to refund a raffle",
+    "group": "Management"
+  },
+  "Manage_ResetKeyword": {
+    "type": "textbox",
+    "value": "reset",
+    "label": "Keyword To Reset Raffle",
+    "tooltip": "Keyword used to reset a raffle",
+    "group": "Management"
+  },
+  "Manage_SaveSnapshotKeyword": {
+    "type": "textbox",
+    "value": "save",
+    "label": "Keyword To Snapshot Raffle",
+    "tooltip": "Keyword used to save a raffle snapshot",
+    "group": "Management"
+  },
+  "Manage_LoadSnapshotKeyword": {
+    "type": "textbox",
+    "value": "load",
+    "label": "Keyword To Load A Raffle",
+    "tooltip": "Keyword used to load a raffle snapshot",
+    "group": "Management"
+  },
+  "Button_OpenRaffle": {
+    "type": "button",
+    "label": "Open Raffle",
+    "tooltip": "Open raffle for entry",
+    "wsevent": "DONATEDRAFFLE_OPEN",
+    "function": "OpenRaffle",
+    "group": "Raffle Actions"
+  },
+  "Button_CloseRaffle": {
+    "type": "button",
+    "label": "Close Raffle",
+    "tooltip": "Close raffle for entry",
+    "function": "CloseRaffle",
+    "wsevent": "DONATEDRAFFLE_CLOSE",
+    "group": "Raffle Actions"
+  },
+  "Button_ResetRaffle": {
+    "type": "button",
+    "label": "Reset Raffle",
+    "tooltip": "Clear raffle entries and winners",
+    "function": "ResetRaffle",
+    "wsevent": "DONATEDRAFFLE_RESET",
+    "group": "Raffle Actions"
+  },
+  "Button_RefundRaffle": {
+    "type": "button",
+    "label": "Refund Raffle",
+    "tooltip": "Refund all raffle entries",
+    "function": "RefundRaffleEntries",
+    "wsevent": "DONATEDRAFFLE_REFUND",
+    "group": "Raffle Actions"
+  },
+  "Button_PickRaffle": {
+    "type": "button",
+    "label": "Pick Winner",
+    "tooltip": "Pick a winner",
+    "function": "PickSingleWinner",
+    "wsevent": "DONATEDRAFFLE_CHOOSE",
+    "group": "Raffle Actions"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "streamlabs_donatedraffle",
+  "version": "0.0.1",
+  "description": "Script for Streamlabs ChatBot to allow running raffles with donated entries or automatic currency giveaway.",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bap14/Streamlabs_DonatedRaffle.git"
+  },
+  "keywords": [
+    "streamlabs",
+    "chatbot",
+    "raffle"
+  ],
+  "author": "BleepBlamBleep",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/bap14/Streamlabs_DonatedRaffle/issues"
+  },
+  "homepage": "https://github.com/bap14/Streamlabs_DonatedRaffle#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-cli": "^2.0.1",
+    "gulp-zip": "^4.1.0",
+    "line-by-line": "^0.1.6"
+  }
+}
