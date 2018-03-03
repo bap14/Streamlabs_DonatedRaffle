@@ -160,50 +160,53 @@ def Execute(data):
         if isRaffleActive and data.GetParam(0).lower() == RaffleSettings.Command.lower() and \
                 Parent.HasPermission(data.User, RaffleSettings.Permission, RaffleSettings.PermissionInfo):
             user_input = ParseUserInput(data)
-            if ValidateEntry(data.User, user_input.numEntries):
+            if ValidateEntry(data.User, user_input["numEntries"]):
                 if user_input is not None:
-                    if not RaffleSettings.EnableDonations and user_input.target is not None:
+                    # If donations aren't enabled and someone is trying to donate
+                    if not RaffleSettings.EnableDonations and user_input["target"] is not None:
                         Parent.SendTwitchMessage("/me " + RaffleSettings.Message_DonationsDisabled.format(
                             Parent.GetDisplayName(data.User)
                         ))
-                    elif RaffleSettings.EnableDonations and user_input.target is not None:
-                        if user_input.target == data.User:
+                    # Donations are enabled and someone is trying to donate
+                    elif RaffleSettings.EnableDonations and user_input["target"] is not None:
+                        if user_input["target"] == data.User:
                             Parent.SendTwitchMessage(RaffleSettings.Message_DonateToSelfDisallowed)
                         else:
                             allowed_to_donate = True
                             if not RaffleSettings.AllowMultipleDonations:
                                 if data.User in donatedEntries and len(donatedEntries[data.User]) and \
-                                        user_input.target not in donatedEntries[data.User]:
+                                        user_input["target"] not in donatedEntries[data.User]:
                                     allowed_to_donate = False
 
                             if allowed_to_donate:
                                 if data.User not in donatedEntries:
                                     donatedEntries[data.User] = {}
-                                if user_input.target not in donatedEntries[data.User]:
-                                    donatedEntries[data.User][user_input.target] = 0
+                                if user_input["target"] not in donatedEntries[data.User]:
+                                    donatedEntries[data.User][user_input["target"]] = 0
 
                                 if not RaffleSettings.MaxPersonalEntries or \
-                                    donatedEntries[data.User][user_input.target] + user_input.numEntries <= \
+                                    donatedEntries[data.User][user_input["target"]] + user_input["numEntries"] <= \
                                         RaffleSettings.MaxPersonalEntries:
-                                    PurchaseEntry(data.User, user_input.numEntries)
-                                    donatedEntries[data.User][user_input.target] += user_input.numEntries
+                                    PurchaseEntry(data.User, user_input["numEntries"])
+                                    donatedEntries[data.User][user_input["target"]] += user_input["numEntries"]
                                     Parent.Log("Donated Raffle",
                                                "{0} donated {1} entries to {2}.".format(Parent.GetDisplayName(data.User),
-                                                                                        user_input.numEntries,
-                                                                                        Parent.GetDisplayName(user_input.target)))
-                                    for i in range(user_input.numEntries):
-                                        raffleEntries.append(user_input.target)
+                                                                                        user_input["numEntries"],
+                                                                                        Parent.GetDisplayName(user_input["target"])))
+                                    for i in range(user_input["numEntries"]):
+                                        raffleEntries.append(user_input["target"])
                                 else:
                                     Parent.SendTwitchMessage(
                                         RaffleSettings.Message_MaxEntriesExceeded.format(data.User,
                                                                                          RaffleSettings.MaxPersonalEntries))
                             else:
                                 Parent.SendTwitchMessage(RaffleSettings.Message_MultipleDonationsDisabled.format(data.User))
+                    # Regular raffle entry
                     else:
                         if not RaffleSettings.MaxPersonalEntries or \
-                                user_input.numEntries <= RaffleSettings.MaxPersonalEntries:
-                            PurchaseEntry(data.User, user_input.numEntries)
-                            for i in range(user_input.numEntries):
+                                user_input["numEntries"] <= RaffleSettings.MaxPersonalEntries:
+                            PurchaseEntry(data.User, user_input["numEntries"])
+                            for i in range(user_input["numEntries"]):
                                 raffleEntries.append(data.User)
                         else:
                             Parent.SendTwitchMessage(
