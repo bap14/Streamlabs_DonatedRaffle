@@ -83,6 +83,7 @@ class Settings:
             "RaffleTimerDuration": 300,
             "IsCurrencyGiveaway": False,
             "CurrencyGiveawayAmount": 1000,
+            "WinnerListCommand": "winners",
 
             "Message_RaffleOpen": "A raffle for: {0} has started! {1} can enter!",
             "Message_RaffleOpenUnlimitedEntry": "[Entry Cost: {0}] - Use `{1} <number>` to enter",
@@ -98,6 +99,7 @@ class Settings:
             "Message_DonateToSelfDisallowed": "You cannot donate entires to yourself.",
             "Message_CloseBeforeChoosing": "You must close the raffle before choosing winners.",
             "Message_NoEntrantsFound": "There are no entrants to choose from.",
+            "Message_WinnerListing": "@{0}, the winners of the last raffle were: {1}",
 
             "Manage_Command": "!manageraffle",
             "Manage_Permission": "Editor",
@@ -214,6 +216,10 @@ def Execute(data):
                                                                                  RaffleSettings.MaxPersonalEntries))
                 else:
                     Parent.Log("Donated Raffle", "Invalid entry received: {0}".format(data.Message))
+        elif not isRaffleActive and data.GetParam(0).lower() == RaffleSettings.Command \
+                and data.GetParamCount() == 2 and data.GetParam(1).lower() == RaffleSettings.WinnerListCommand.lower() \
+                and len(winnerList):
+            Parent.SendTwitchMessage(RaffleSettings.Message_WinnerListing.format(data.User, ", ".join(winnerList)))
         elif data.GetParam(0).lower() == RaffleSettings.Manage_Command.lower() \
                 and Parent.HasPermission(data.User, RaffleSettings.Manage_Permission,
                                          RaffleSettings.Manage_PermissionInfo):
