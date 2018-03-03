@@ -66,9 +66,9 @@ class Settings:
                                                             sort_keys=True)))
         return
 
-    #
+    # ------------------------
     # Get a copy of the default settings JSON structure
-    #
+    # ------------------------
     def getDefaultSettings(self):
         return {
             "Prize": "",
@@ -157,61 +157,60 @@ def ReloadSettings(jsonData):
 def Execute(data):
     global RaffleSettings, isRaffleActive, raffleEntries
     if data.IsChatMessage():
-        if isRaffleActive and data.GetParam(0).lower() == RaffleSettings.Command and \
+        if isRaffleActive and data.GetParam(0).lower() == RaffleSettings.Command.lower() and \
                 Parent.HasPermission(data.User, RaffleSettings.Permission, RaffleSettings.PermissionInfo):
-            if ValidateEntry(data.User, int(data.GetParam(1))):
-                if not RaffleSettings.EnableDonations and data.GetParamCount() > 2:
-                    Parent.SendTwitchMessage("/me " + RaffleSettings.Message_DonationsDisabled.format(
-                        Parent.GetDisplayName(data.User)
-                    ))
-                elif RaffleSettings.EnableDonations and data.GetParamCount() == 3:
-                    donate_to = data.GetParam(2).lower()
-
-                    if donate_to[0] == '@':
-                        donate_to = donate_to[1:]
-
-                    if donate_to == data.User:
-                        Parent.SendTwitchMessage(RaffleSettings.Message_DonateToSelfDisallowed)
-                    else:
-                        allowed_to_donate = True
-                        if not RaffleSettings.AllowMultipleDonations:
-                            if data.User in donatedEntries and len(donatedEntries[data.User]) and \
-                                    donate_to not in donatedEntries[data.User]:
-                                allowed_to_donate = False
-
-                        if allowed_to_donate:
-                            if data.User not in donatedEntries:
-                                donatedEntries[data.User] = {}
-                            if donate_to not in donatedEntries[data.User]:
-                                donatedEntries[data.User][donate_to] = 0
-
-                            if not RaffleSettings.MaxPersonalEntries or \
-                                donatedEntries[data.User][donate_to] + int(data.GetParam(1)) <= \
-                                    RaffleSettings.MaxPersonalEntries:
-                                PurchaseEntry(data.User, int(data.GetParam(1)))
-                                donatedEntries[data.User][donate_to] += int(data.GetParam(1))
-                                Parent.Log("Donated Raffle",
-                                           "{0} donated {1} entries to {2}.".format(Parent.GetDisplayName(data.User),
-                                                                                    int(data.GetParam(1)),
-                                                                                    Parent.GetDisplayName(donate_to)))
-                                for i in range(int(data.GetParam(1))):
-                                    raffleEntries.append(donate_to)
-                            else:
-                                Parent.SendTwitchMessage(
-                                    RaffleSettings.Message_MaxEntriesExceeded.format(data.User,
-                                                                                     RaffleSettings.MaxPersonalEntries))
+            user_input = ParseUserInput(data)
+            if ValidateEntry(data.User, user_input.numEntries):
+                if user_input is not None:
+                    if not RaffleSettings.EnableDonations and user_input.target is not None:
+                        Parent.SendTwitchMessage("/me " + RaffleSettings.Message_DonationsDisabled.format(
+                            Parent.GetDisplayName(data.User)
+                        ))
+                    elif RaffleSettings.EnableDonations and user_input.target is not None:
+                        if user_input.target == data.User:
+                            Parent.SendTwitchMessage(RaffleSettings.Message_DonateToSelfDisallowed)
                         else:
-                            Parent.SendTwitchMessage(RaffleSettings.Message_MultipleDonationsDisabled.format(data.User))
-                else:
-                    if not RaffleSettings.MaxPersonalEntries or \
-                            raffleEntries.count(data.User) + int(data.GetParam(1)) <= RaffleSettings.MaxPersonalEntries:
-                        PurchaseEntry(data.User, int(data.GetParam(1)))
-                        for i in range(int(data.GetParam(1))):
-                            raffleEntries.append(data.User)
+                            allowed_to_donate = True
+                            if not RaffleSettings.AllowMultipleDonations:
+                                if data.User in donatedEntries and len(donatedEntries[data.User]) and \
+                                        user_input.target not in donatedEntries[data.User]:
+                                    allowed_to_donate = False
+
+                            if allowed_to_donate:
+                                if data.User not in donatedEntries:
+                                    donatedEntries[data.User] = {}
+                                if user_input.target not in donatedEntries[data.User]:
+                                    donatedEntries[data.User][user_input.target] = 0
+
+                                if not RaffleSettings.MaxPersonalEntries or \
+                                    donatedEntries[data.User][user_input.target] + user_input.numEntries <= \
+                                        RaffleSettings.MaxPersonalEntries:
+                                    PurchaseEntry(data.User, user_input.numEntries)
+                                    donatedEntries[data.User][user_input.target] += user_input.numEntries
+                                    Parent.Log("Donated Raffle",
+                                               "{0} donated {1} entries to {2}.".format(Parent.GetDisplayName(data.User),
+                                                                                        user_input.numEntries,
+                                                                                        Parent.GetDisplayName(user_input.target)))
+                                    for i in range(user_input.numEntries):
+                                        raffleEntries.append(user_input.target)
+                                else:
+                                    Parent.SendTwitchMessage(
+                                        RaffleSettings.Message_MaxEntriesExceeded.format(data.User,
+                                                                                         RaffleSettings.MaxPersonalEntries))
+                            else:
+                                Parent.SendTwitchMessage(RaffleSettings.Message_MultipleDonationsDisabled.format(data.User))
                     else:
-                        Parent.SendTwitchMessage(
-                            RaffleSettings.Message_MaxEntriesExceeded.format(data.User,
-                                                                             RaffleSettings.MaxPersonalEntries))
+                        if not RaffleSettings.MaxPersonalEntries or \
+                                user_input.numEntries <= RaffleSettings.MaxPersonalEntries:
+                            PurchaseEntry(data.User, user_input.numEntries)
+                            for i in range(user_input.numEntries):
+                                raffleEntries.append(data.User)
+                        else:
+                            Parent.SendTwitchMessage(
+                                RaffleSettings.Message_MaxEntriesExceeded.format(data.User,
+                                                                                 RaffleSettings.MaxPersonalEntries))
+                else:
+                    Parent.Log("Donated Raffle", "Invalid entry received: {0}".format(data.Message))
         elif data.GetParam(0).lower() == RaffleSettings.Manage_Command.lower() \
                 and Parent.HasPermission(data.User, RaffleSettings.Manage_Permission,
                                          RaffleSettings.Manage_PermissionInfo):
@@ -257,6 +256,11 @@ def CloseRaffle():
         Parent.SendTwitchMessage(RaffleSettings.Message_RaffleClosed)
     return
 
+def NormalizeUsername(name):
+    if name[0] == '@':
+        name = name[1:]
+    return name
+
 def OpenRaffle():
     global RaffleSettings, isRaffleActive, raffleStartTime
     if not isRaffleActive:
@@ -279,6 +283,38 @@ def OpenRaffle():
                                                                                    RaffleSettings.Permission))
         Parent.SendTwitchMessage(maxInfo + donationInfo)
     return
+
+def ParseUserInput(data):
+    parsed_input = dict()
+    parsed_input.update({
+        "command": None,
+        "numEntries": None,
+        "target": None
+    })
+
+    parsed_input["command"] = data.GetParam(0)
+    regex = re.compile(r"^@?.+$")
+
+    # !<command>
+    if data.GetParamCount() == 1:
+        parsed_input["numEntries"] = 1
+    # !<command> 10
+    elif data.GetParamCount() == 2 and data.GetParam(1).isdigit():
+        parsed_input["numEntries"] = int(data.GetParam(1))
+    # !<command> <target>
+    elif data.GetParamCount() == 2 and re.match(regex, data.GetParam(1)):
+        parsed_input["numEntries"] = 1
+        parsed_input["target"] = NormalizeUsername(data.GetParam(1))
+    # !<command> 10 <target>
+    elif data.GetParamCount() == 3 and data.GetParam(1).isdigit() and re.match(regex, data.GetParam(2)):
+        parsed_input["numEntries"] = int(data.GetParam(1)) if int(data.GetParam(1)) > 0 else 1
+        parsed_input["target"] = NormalizeUsername(data.GetParam(2))
+    # !<command> 10 for <target>
+    else:
+        parsed_input = None
+
+    Parent.Log("Donated Raffle", json.dumps(parsed_input))
+    return parsed_input
 
 def PickWinners(num):
     global RaffleSettings, winnerList, isRaffleActive
@@ -362,6 +398,9 @@ def ResetRaffle():
     Parent.SendTwitchMessage("/me Raffle Reset")
     return
 
+# ----------------
+# Clean user-input to remove "illegal" characters for Windows operating system filenames
+# ----------------
 def SanitizeFilename(message, sindex):
     if not sindex:
         sindex = 0
@@ -370,10 +409,16 @@ def SanitizeFilename(message, sindex):
     file_name = re.sub(r"\\/:\*\?\"<>\|", "-", file_name)
     return file_name
 
+# ----------------
+# Check to see if user has not exceeded max entries AND they have the currency to purchase numEntries entries
+# ----------------
 def ValidateEntry(user, numEntries):
     global RaffleSettings
     isValid = True
-    if RaffleSettings.MaxPersonalEntries and numEntries > RaffleSettings.MaxPersonalEntries:
+    if numEntries is None:
+        isValid = False
+        Parent.Log("Donated Raffle", "Invalid entry received: {0}".format(data.Message))
+    elif RaffleSettings.MaxPersonalEntries and numEntries > RaffleSettings.MaxPersonalEntries:
         isValid = False
         Parent.SendTwitchMessage(RaffleSettings.Message_MaxEntriesExceeded.format(user, RaffleSettings.MaxPersonalEntries))
     else:
