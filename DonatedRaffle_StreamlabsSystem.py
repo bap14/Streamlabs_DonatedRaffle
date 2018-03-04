@@ -321,8 +321,6 @@ def ParseUserInput(data):
     # !<command> 10 for <target>
     else:
         parsed_input = None
-
-    Parent.Log("Donated Raffle", json.dumps(parsed_input))
     return parsed_input
 
 def PickWinners(num):
@@ -398,12 +396,13 @@ def RemoveEntrant(username):
     return
 
 def ResetRaffle():
-    global RaffleSettings, isRaffleActive, donatedEntries, raffleEntries, raffleStartTime, entryPurchases
+    global RaffleSettings, isRaffleActive, donatedEntries, raffleEntries, raffleStartTime, entryPurchases, winnerList
     isRaffleActive = False
     raffleStartTime = 0
     raffleEntries = []
     entryPurchases = {}
     donatedEntries = {}
+    winnerList = []
     Parent.SendTwitchMessage("/me Raffle Reset")
     return
 
