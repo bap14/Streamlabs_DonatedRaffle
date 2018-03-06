@@ -145,6 +145,10 @@ configured settings with the saved settings. Default: `load`
 The buttons section should be self-explanatory. Click a button and the
 corresponding action is executed on the raffle (if applicable).
 
+## Support
+
+If you use this script and would like to support further development, you can send donations / tips [via PayPal](https://www.paypal.me/bleepblambleep)
+
 ## Notes
 
 1. Streamlabs Chatbot will not always respond to every request immediately.
