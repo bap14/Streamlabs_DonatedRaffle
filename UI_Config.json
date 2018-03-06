@@ -32,9 +32,34 @@
     "tooltip": "Set the user, rank or tier for selected permission (if applicable)",
     "group": "General"
   },
+  "WinnerListKeyword": {
+    "type": "textbox",
+    "value": "winners",
+    "label": "Winner List Keyword",
+    "tooltip": "First parameter after `Command` above users enter to get list of recent winners.",
+    "group": "General"
+  },
+  "WinnerListPermission": {
+    "type": "dropdown",
+    "value": "Everyone",
+    "items": [
+          "Everyone", "Regular", "Subscriber", "GameWisp Subscriber", "User_Specific", "Min_Rank", "Min_Points",
+          "Min_Hours", "Moderator", "Editor", "Caster"
+    ],
+    "label": "Winner List Permission",
+    "tooltip": "Minimum user level to list recent winners",
+    "group": "General"
+  },
+  "WinnerListPermissionInfo": {
+    "type": "textbox",
+    "value": "",
+    "label": "Winner List Permission Info",
+    "tooltip": "Set the user, rank or tier for selected permission (if applicable)",
+    "group": "General"
+  },
   "EntryCost": {
     "type": "numberbox",
-    "value": 100,
+    "value": 0,
     "label": "Cost Per Entry",
     "tooltip": "Amount of currency per entry to remove",
     "group": "Raffle Settings"
@@ -49,8 +74,8 @@
   "EnableDonations": {
     "type": "checkbox",
     "value": false,
-    "label": "Allow Donating Tickets",
-    "tooltip": "Allow viewers to purchase tickets for other viewers",
+    "label": "Allow Donating Entries",
+    "tooltip": "Allow viewers to purchase entries for other viewers",
     "group": "Raffle Settings"
   },
   "AllowMultipleDonations": {
@@ -105,15 +130,15 @@
   "Message_RaffleOpenLimitedEntry": {
     "type": "textbox",
     "value": "Entry Cost: {0} - Maximum Entries: {1} - Use `{2} <number>` to enter",
-    "label": "Raffle Open (with Max Tickets)",
+    "label": "Raffle Open (with Max Entries)",
     "tooltip": "Message announcing an open raffle, with maximum entries, in chat",
     "group": "Messages"
   },
   "Message_RaffleOpenDonateEntry": {
     "type": "textbox",
     "value": "or `{0} <number> <username>` to donate entries to someone.",
-    "label": "Donate Tickets",
-    "tooltip": "Included with raffle open message: instructions on how to donate tickets",
+    "label": "Donate Entries",
+    "tooltip": "Included with raffle open message: instructions on how to donate entries",
     "group": "Messages"
   },
   "Message_RaffleClosed": {
@@ -141,14 +166,14 @@
     "type": "textbox",
     "value": "@{0} you don't have enough {1}!",
     "label": "Not Enough Currency",
-    "tooltip": "Response to user(s) when they don't have enough currency to purchase the number of tickets",
+    "tooltip": "Response to user(s) when they don't have enough currency to purchase the number of entries",
     "group": "Error Messages"
   },
   "Message_MaxEntriesExceeded": {
     "type": "textbox",
     "value": "@{0} You are only able to purchase up to {1} entries.",
-    "label": "Maximum Tickets Response",
-    "tooltip": "Response message if user tries to purchase too many tickets",
+    "label": "Maximum Entries Response",
+    "tooltip": "Response message if user tries to purchase too many entries",
     "group": "Error Messages"
   },
   "Message_MultipleDonationsDisabled": {
@@ -186,6 +211,13 @@
     "tooltip": "No raffle entries to choose from message",
     "group": "Error Messages"
   },
+  "Message_WinnerListing": {
+    "type": "textbox",
+    "value": "@{0}, the winners of the last raffle were: {1}",
+    "label": "Recent Winner Listing",
+    "tooltip": "Message to send when recent winner list is requested.",
+    "group": "Error Messages"
+  },
   "Manage_Command": {
     "type": "textbox",
     "value": "!manageraffle",
@@ -197,7 +229,7 @@
     "type": "dropdown",
     "value": "Editor",
     "items": ["Everyone","Regular","Subscriber","GameWisp Subscriber","User_Specific","Min_Rank","Min_Points","Min_Hours","Moderator","Editor","Caster"],
-    "label": "Permission Level",
+    "label": "Management Permission Level",
     "tooltip": "Minimum user level to allow management",
     "group": "Management"
   },
@@ -206,6 +238,13 @@
     "value": "",
     "label": "Management Permission Info",
     "tooltip": "Set the user, rank or tier for management permission",
+    "group": "Management"
+  },
+  "Manage_ClearWinnersKeyword": {
+    "type": "textbox",
+    "value": "close",
+    "label": "Keyword To Clear Recent Winners",
+    "tooltip": "Keyword used to clear recent raffle winners (to create a 'second' winner list",
     "group": "Management"
   },
   "Manage_CloseKeyword": {
@@ -295,6 +334,14 @@
     "tooltip": "Pick a winner",
     "function": "PickSingleWinner",
     "wsevent": "DONATEDRAFFLE_CHOOSE",
+    "group": "Raffle Actions"
+  },
+  "Button_ClearRaffleWinners": {
+    "type": "button",
+    "label": "Clear Winners List",
+    "tooltip": "Clear existing winners to pick secondary list",
+    "function": "ClearWinnersList",
+    "wsevent": "DONATEDRAFFLE_CLEAR_WINNERS",
     "group": "Raffle Actions"
   }
 }
