@@ -37,7 +37,7 @@ SetCompressor lzma
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "Streamlabs Chatbot DonatedRaffle Setup.exe"
+OutFile "..\dist\Streamlabs Chatbot DonatedRaffle Setup-${PRODUCT_VERSION}.exe"
 InstallDir "$APPDATA\Streamlabs\Streamlabs Chatbot\Services\Scripts\DonatedRaffle"
 ShowInstDetails show
 

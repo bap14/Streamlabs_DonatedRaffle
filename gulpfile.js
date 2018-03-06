@@ -13,7 +13,7 @@ gulp.task('bundle', function () {
     getCurrentVersion().then(
         function (version) {
             getScriptSources()
-                .pipe(zip('DonatedRaffle-' + version + '.zip'))
+                .pipe(zip('Streamlabs Chatbot DonatedRaffle-' + version + '.zip'))
                 .pipe(gulp.dest('dist'));
         },
         function (err) { throw err; }
@@ -23,10 +23,9 @@ gulp.task('bundle', function () {
 function getScriptSources() {
     return gulp.src([
         '*.py',
-        'settings.json',
+        'LICENSE',
         'README.md',
-        'UI_Config.json',
-        'settings.json'
+        'UI_Config.json'
     ]);
 }
 
