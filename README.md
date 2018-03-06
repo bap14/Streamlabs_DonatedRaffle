@@ -77,8 +77,11 @@ fill in data about the raffle.
 - **Raffle Closed** :: "Entries have stopped for the raffle! You can no longer enter!"
 - **Raffle Refunded** :: "All {0} has been refunded for the current raffle."
   - `{0}` - Currency Name
-- **Raffle Winner Notification** :: "@{0}, you have won! Speak up in chat!"
+- **Raffle Winner Notification** :: "@{0}, you have won (with {1} entries)! Speak up in chat!"
   - `{0}` - Winner's username
+  - `{1}` - Total number of chances winner had in raffle
+- **Multiple Winner Notification** :: "{0} you have all won! Please speak up in chat!"
+  - `{0}` - Listing of tagged usernames that are in the full winners list
 - **Not Enough Currency** :: "@{0} you don't have enough {1}!"
   - `{0}` - The user trying to purchase entries
   - `{1}` - Currency Name
