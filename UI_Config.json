@@ -85,6 +85,13 @@
     "tooltip": "Allow viewers to donate to multiple people",
     "group": "Raffle Settings"
   },
+  "AnnounceWinnersIndividually": {
+    "type": "checkbox",
+    "value": true,
+    "label": "Announce Winners Individually",
+    "tooltip": "Announce each winners in their own message in chat",
+    "group": "Raffle Settings"
+  },
   "IsRaffleTimed": {
     "type": "checkbox",
     "value": false,
@@ -160,6 +167,13 @@
     "value": "@{0}, you have won! Speak up in chat!",
     "label": "Raffle Winner Notification",
     "tooltip": "Message to announce winner in chat",
+    "group": "Messages"
+  },
+  "Message_MultipleWinners": {
+    "type": "textbox",
+    "value": "{0} you have all won! Please speak up in chat!",
+    "label": "Multiple Winner Notification",
+    "tooltip": "Message to announce multiple winners in one chat message",
     "group": "Messages"
   },
   "Message_NotEnoughCurrency": {

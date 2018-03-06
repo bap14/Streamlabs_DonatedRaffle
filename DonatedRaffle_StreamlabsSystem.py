@@ -86,6 +86,7 @@ class Settings:
             "WinnerListKeyword": "winners",
             "WinnerListPermission": "Everyone",
             "WinnerListPermissionInfo": "",
+            "AnnounceWinnersIndividually": True,
 
             "Message_RaffleOpen": "A raffle for: {0} has started! {1} can enter!",
             "Message_RaffleOpenUnlimitedEntry": "[Entry Cost: {0}] - Use `{1} <number>` to enter",
@@ -102,6 +103,7 @@ class Settings:
             "Message_CloseBeforeChoosing": "You must close the raffle before choosing winners.",
             "Message_NoEntrantsFound": "There are no entrants to choose from.",
             "Message_WinnerListing": "@{0}, the winners of the last raffle were: {1}",
+            "Message_MultipleWinners": "{0} you have all won! Please speak up in chat!",
 
             "Manage_Command": "!manageraffle",
             "Manage_Permission": "Editor",
@@ -174,7 +176,7 @@ def Execute(data):
                         ))
                     # Donations are enabled and someone is trying to donate
                     elif RaffleSettings.EnableDonations and user_input["target"] is not None:
-                        if user_input["target"] == data.User:
+                        if user_input["target"].lower() == data.User.lower():
                             Parent.SendTwitchMessage(RaffleSettings.Message_DonateToSelfDisallowed)
                         else:
                             allowed_to_donate = True
@@ -355,13 +357,17 @@ def PickWinners(num):
                     # Parent.Log("Donated Raffle", "Winners: {0}".format(", ".join(winnerList)))
 
                     if RaffleSettings.IsCurrencyGiveaway and RaffleSettings.CurrencyGiveawayAmount > 0:
-                        Parent.Log("Donated Raffle", "Giving {0} {1} currency to {2}".format(
-                            int(RaffleSettings.CurrencyGiveawayAmount),
-                            Parent.GetCurrencyName(),
-                            Parent.GetDisplayName(winner)))
+                        # Parent.Log("Donated Raffle", "Giving {0} {1} currency to {2}".format(
+                        #     int(RaffleSettings.CurrencyGiveawayAmount),
+                        #     Parent.GetCurrencyName(),
+                        #     Parent.GetDisplayName(winner)))
                         Parent.AddPoints(winner, int(RaffleSettings.CurrencyGiveawayAmount))
 
-                    Parent.SendTwitchMessage(RaffleSettings.Message_Winner.format(Parent.GetDisplayName(winner)))
+                    if RaffleSettings.AnnounceWinnersIndividually or num == 1:
+                        Parent.SendTwitchMessage(RaffleSettings.Message_Winner.format(Parent.GetDisplayName(winner)))
+            if not RaffleSettings.AnnounceWinnersIndividually and num > 1:
+                Parent.Log(RaffleSettings.Message_MultipleWinners.format(", ".join(winnerList)))
+                Parent.SendTwitchMessage("@" + RaffleSettings.Message_MultipleWinners.format(", @".join(winnerList)))
         else:
             Parent.SendTwitchMessage("/me " + RaffleSettings.Message_NoEntrantsFound)
     return
