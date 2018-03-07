@@ -6,10 +6,16 @@
 !define PRODUCT_PUBLISHER "BleepBlamBleep"
 !define PRODUCT_WEB_SITE "https://github.com/bap14/Streamlabs_DonatedRaffle"
 
+Name "${PRODUCT_NAME}"
+OutFile "..\dist\Streamlabs Chatbot Donated Raffle Setup-${PRODUCT_VERSION}.exe"
+InstallDir "$APPDATA\Streamlabs\Streamlabs Chatbot\"
+ShowInstDetails show
+
 SetCompressor lzma
 
 ; MUI 1.67 compatible ------
 !include "MUI.nsh"
+!include "x64.nsh"
 
 ; MUI Settings
 !define MUI_ABORTWARNING
@@ -19,13 +25,23 @@ SetCompressor lzma
 !insertmacro MUI_PAGE_WELCOME
 ; License page
 !insertmacro MUI_PAGE_LICENSE "../LICENSE"
+; Components page
+!define MUI_PAGE_CUSTOMFUNCTION_PRE SelectPrerequisiteFiles
+!insertmacro MUI_PAGE_INSTFILES
+
+;!insertmacro MUI_PAGE_COMPONENTS
+
 ; Directory page
+!define MUI_DIRECTORYPAGE_TEXT_TOP "Browse to the folder where 'Streamlabs Chatbot.exe' is installed. By default \
+                                    this is 'C:\Users\<username>\AppData\Local\Roaming\Streamlabs\Streamlabs Chatbot'."
+!define MUI_PAGE_CUSTOMFUNCTION_PRE UpdateChatbotInstallDir
 !insertmacro MUI_PAGE_DIRECTORY
 ; Instfiles page
+!define MUI_PAGE_CUSTOMFUNCTION_PRE SelectScriptFiles
 !insertmacro MUI_PAGE_INSTFILES
 ; Finish page
 ; !define MUI_FINISHPAGE_RUN "$APPDATA\Streamlabs\Streamlabs Chatbot\Streamlabs Chatbot.exe"
-!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\README.md"
+; !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\README.md"
 !insertmacro MUI_PAGE_FINISH
 
 ; Language files
@@ -36,19 +52,163 @@ SetCompressor lzma
 
 ; MUI end ------
 
-Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "..\dist\Streamlabs Chatbot DonatedRaffle Setup-${PRODUCT_VERSION}.exe"
-InstallDir "$APPDATA\Streamlabs\Streamlabs Chatbot\Services\Scripts\DonatedRaffle"
-ShowInstDetails show
 
-Section "Donated Raffle Core" SEC01
-  SetOutPath "$INSTDIR"
-  SetOverwrite ifnewer
-  File "..\DonatedRaffle_StreamlabsSystem.py"
-  File "..\UI_Config.json"
-  File "..\LICENSE"
-  File "..\README.md"
-SectionEnd
+SectionGroup /e "Required Items" preReqs
+  Section "Python 2.7" secPython27
+    SectionIn RO
+    Call InstallPython
+  SectionEnd
+  Section "Streamlabs Chatbot" secSLCB
+    SectionIn RO
+    Call InstallStreamlabsChatbot
+  SectionEnd
+SectionGroupEnd
+
+SectionGroup "!Chatbot Script Files" scriptFiles
+  Section "Donated Raffle Core" secDonatedRaffle
+    SetOutPath "$INSTDIR\Services\Scripts\DonatedRaffle"
+    SetOverwrite ifnewer
+    SectionIn RO
+    File "..\DonatedRaffle_StreamlabsSystem.py"
+    File "..\UI_Config.json"
+    File "..\LICENSE"
+    File "..\README.md"
+  SectionEnd
+SectionGroupEnd
 
 Section -Post
 SectionEnd
+
+!define PREREQS_StartIndex ${preReqs}
+!define PREREQS_EndIndex ${secSLCB}
+!define CHATBOT_StartIndex ${scriptFiles}
+!define CHATBOT_EndIndex ${secDonatedRaffle}
+
+var /GLOBAL dlUrl
+var /GLOBAL dlPath
+
+Function SelectPrerequisiteFiles
+  Push $R0
+  Push $R1
+  StrCpy $R0 ${CHATBOT_StartIndex}
+
+  UnselLoop:
+    IntOp $R0 $R0 + 1
+    SectionGetFlags $R0 $R1
+      !insertmacro UnselectSection $R0
+      StrCmp $R0 ${CHATBOT_EndIndex} 0 UnselLoop
+
+  Pop $R0
+  Pop $R1
+FunctionEnd
+
+Function SelectScriptFiles
+  Push $R0
+  Push $R1
+  StrCpy $R0 ${PREREQS_StartIndex}
+
+  UnselLoop:
+    IntOp $R0 $R0 + 1
+    SectionGetFlags $R0 $R1
+      !insertmacro UnselectSection $R0
+      StrCmp $R0 ${PREREQS_EndIndex} 0 UnselLoop
+      
+  StrCpy $R0 ${CHATBOT_StartIndex}
+  SelLoop:
+    IntOp $R0 $R0 + 1
+    SectionGetFlags $R0 $R1
+      !insertmacro SelectSection $R0
+      StrCmp $R0 ${CHATBOT_EndIndex} 0 SelLoop
+
+  Pop $R0
+  Pop $R1
+FunctionEnd
+
+Function checkPython
+  ${if} ${RunningX64}
+    SetRegView 64
+  ${endif}
+  ReadRegStr $R0 HKLM "SOFTWARE\Python\PythonCore\2.7\InstallPath" ""
+  IfFileExists "$R0\Lib\abc.py" 0 pythonMissing
+    Push "1"
+    Return
+  pythonMissing:
+    Push "0"
+    Return
+FunctionEnd
+
+Function checkChatbot
+  ${if} ${RunningX64}
+    ReadRegStr $R0 HKLM "Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{08D3C5BB-C492-4916-B111-725081845380}_is1" "InstallLocation"
+  ${else}
+    ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\{08D3C5BB-C492-4916-B111-725081845380}_is1" "InstallLocation"
+  ${endif}
+  IfFileExists "$R0\Streamlabs Chatbot.exe" 0 slcbMissing
+    StrCpy $INSTDIR $R0
+    Push "1"
+    Return
+  slcbMissing:
+    Push "0"
+    Return
+FunctionEnd
+
+Function InstallPython
+  Call checkPython
+  Pop $0
+  StrCmp $0 "1" skipInstall
+  StrCpy $dlPath "$TEMP\python-2.7.msi"
+  ${if} ${RunningX64}
+    StrCpy $dlUrl "https://www.python.org/ftp/python/2.7.14/python-2.7.14.amd64.msi"
+  ${else}
+    StrCpy $dlUrl "https://www.python.org/ftp/python/2.7.14/python-2.7.14.msi"
+  ${endif}
+  inetc::get /CAPTION "Downloading" /BANNER "Python 2.7" $dlUrl $dlPath /END
+  Pop $R0
+  StrCmp $R0 "OK" downloadSuccess
+    MessageBox MB_OK|MB_ICONSTOP "Failed to download Python 2.7" /SD IDOK
+    Quit
+      
+  downloadSuccess:
+    ClearErrors
+    ExecWait '"msiexec" /i "$dlPath"' $R0
+    StrCmp $0 "0" 0 installError
+    Delete $dlPath
+    Return
+    
+  skipInstall:
+    Return
+    
+  installError:
+    MessageBox MB_OK "Failed to install Python 2.7. Please try again." /SD IDOK
+    Quit
+FunctionEnd
+
+Function InstallStreamlabsChatbot
+  Call checkChatbot
+  Pop $0
+  StrCmp $0 "1" skipInstall
+  StrCpy $dlUrl "https://cdn.streamlabs.com/chatbot/Streamlabs+Chatbot+Installer.exe"
+  StrCpy $dlPath "$TEMP\Streamlabs Chatbot Installer.exe"
+  inetc::get /CAPTION "Downloading" /BANNER "Streamlabs Chatbot" $dlUrl $dlPath /END
+  Pop $R0
+  StrCmp $R0 "OK" downloadSuccess
+  MessageBox MB_OK|MB_ICONSTOP "Failed to download Streamlabs Chatbot: $R0" /SD IDOK
+  Quit
+      
+  downloadSuccess:
+    ClearErrors
+    ExecWait '$dlPath'
+    IfErrors installError
+    Delete $dlPath
+    
+  skipInstall:
+    Return
+    
+  installError:
+    MessageBox MB_OK "Failed to install Streamlabs Chatbot. Please try again." /SD IDOK
+    Quit
+FunctionEnd
+
+Function UpdateChatbotInstallDir
+  Call checkChatbot
+FunctionEnd
