@@ -13,7 +13,60 @@ ability for users to donate entries to others.
 - Recalling Raffle Winner List
 - Pick Multiple Winners At Once
 
+## Installation
+
+There are two ways to install this script.  You can download the zip 
+release and manually install the files or download the installer and run
+it.
+
+The basics of the installation are as follows:
+
+1. Install the files using one of the methods outlined below
+1. Open Streamlabs Chatbot (if it isn't opened already)
+1. Connect to the chat servers both as the streamer and the bot
+1. In the left-hand list of sections, choose "Scripts"
+1. If you haven't configured your `Python 2.7 Directory` path yet:
+   (see [this youtube video](https://youtu.be/l3FBpY-0880?t=2m21s) for example)
+    - Click the Cog wheel in the top right.
+    - Click the "Pick Folder" button for the `Python 2.7 Directory`
+      and browse to your Python installations `Lib` directory (by
+      default this is: `C:\Python27\Lib`)
+    - Click the left arrow to go back to the main script panel
+1. Now Right-click in the large pane listing scripts (it may be empty if
+    this is your first script to be installed)
+1. Select "Reload Scripts" and "Donated Raffle" should now appear.
+1. Left-click on the "Donated Raffle" row to bring up it's settings in a
+    panel on the right.
+1. When you're ready for this script to run, check the "Enabled" checkbox
+    in the script listing panel. If this is not checked, this script will
+    not have any effect.
+
+### Installer Method
+
+1. Download the [latest release installer](https://github.com/bap14/Streamlabs_DonatedRaffle/releases/latest):
+    `Streamlabs.Chatbot.Donated.Raffle.Setup-<version>.exe`
+2. Open the installer and follow the instructions.
+    > It will automatically check for Python 2.7 and Streamlabs Chatbot. If
+    > either is missing, it will attempt to download and install it.
+    > 
+    > The checks are done via the Registry (as it's how Windows keeps track 
+    > of installed programs).
+3. When asked for a path, choose the install directory for the `Streamlabs 
+    Chatbot.exe` file. This will ensure the script files are placed in the
+    proper directory.
+    
+### Manual Installation Method
+
+1. Download the [latest release zip bundle](https://github.com/bap14/Streamlabs_DonatedRaffle/releases/latest):
+    `Streamlabs.Chatbot.Donated.Raffle-<version>.zip`
+1. Extractthe files to `<Streamlabs Chatbot Install Dir>\Services\Scripts\DonatedRaffle`
+    - `<Streamlabs Chatbot Install>` is the path to the folder that contains `Streamlabs Chatbot.exe`.
+    - If you don't have a folder `DonatedRaffle` in the `Scripts` folder, create it first.
+    - Within the `DonatedRaffle` folder should be (at minimum) `DonatedRaffle_StreamlabsSystem.py` and `UI_Config.json`
+
 ## Configuration Parameters
+
+Configuration of the raffle is done via the GUI itself.  This is currently the only way to configure the raffle settings.
 
 ### General
 
@@ -153,5 +206,6 @@ If you use this script and would like to support further development, you can se
 
 1. Streamlabs Chatbot will not always respond to every request immediately.
 There is a 2-second cooldown on sending messages.  This will be very
-apparent if you use the management command to choose multiple winners.
-The names will appear as separate messages in chat.
+apparent if you use the management command to choose multiple winners and
+the setting "Announce Winners Individually" is enabled. The names will 
+appear as separate messages in chat.
