@@ -1,7 +1,7 @@
 title: Donated Raffle for Streamlabs Chatbot
 theme: jekyll-theme-architect
 description: > # this means to ignore newlines until "baseurl:"
-A custom script for Streamlabs Chatbot to run raffles that allow users to donate entries to others.
+  A custom script for Streamlabs Chatbot to run raffles that allow users to donate entries to others.
 baseurl: "/Streamlabs_DonatedRaffle"
 url: "https://bap14.github.io"
 include: [_pages]
