@@ -164,7 +164,7 @@
   },
   "Message_Winner": {
     "type": "textbox",
-    "value": "@{0}, you have won! Speak up in chat!",
+    "value": "@{0}, you have won (with {1} entries)! Speak up in chat!",
     "label": "Raffle Winner Notification",
     "tooltip": "Message to announce winner in chat",
     "group": "Messages"

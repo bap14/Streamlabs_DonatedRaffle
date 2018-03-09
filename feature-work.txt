@@ -1,0 +1,35 @@
+UI_Config.json
+
+    "CountdownToRaffleClose": {
+      "type": "checkbox",
+      "value": false,
+      "label": "Countdown To Raffle Close",
+      "tooltip": "Send chat messages that counts down to the end of the raffle.",
+      "group": "Raffle Settings"
+    },
+    "CountdownFrom": {
+      "type": "numberbox",
+      "value": 10,
+      "label": "Countdown From",
+      "tooltip": "Start countdown here, end at zero",
+      "group": "Raffle Settings"
+    },
+    "Message_CountdownAnnouncement": {
+      "type": "textbox",
+      "value": "The raffle will close in {0}",
+      "label": "Countdown display in chat",
+      "tooltip": "Display this message as the countdown to the close of the raffle",
+      "group": "Messages"
+    },
+
+
+README.md
+
+- **Countdown To Raffle Close** :: Publish a countdown to the end of the raffle in chat. Default: `False`
+- **Countdown From** :: Start the countdown here, and end at 0 (zero)* Default: `10`
+
+1. The countdown will only send messages every-other second on "odd"
+counts.  This is to work around the 2-second cooldown limitation that
+the Chatbot has.  This will mean that other responses may be delayed
+slightly (e.g. the close announcement, winners, currency check requests,
+etc).

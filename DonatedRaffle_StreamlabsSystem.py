@@ -10,6 +10,7 @@ import codecs
 import json
 import re
 import time
+# import math
 from random import *
 
 # ------------------------
@@ -19,11 +20,12 @@ ScriptName = "Donated Raffle"
 Website = "https://github.com/bap14/Streamlabs_DonatedRaffle"
 Description = "Creates a raffle system that allows viewers to 'donate' chances to other viewers"
 Creator = "BleepBlamBleep"
-Version = "0.0.1"
+Version = "0.0.1.1"
 
 # ------------------------
 # Set Variables
 # ------------------------
+countdownUsed = []
 donatedEntries = {}
 entryPurchases = {}
 fileEncoding = 'utf-8-sig'
@@ -88,6 +90,8 @@ class Settings:
             "WinnerListPermission": "Everyone",
             "WinnerListPermissionInfo": "",
             "AnnounceWinnersIndividually": True,
+            "CountdownToRaffleClose": False,
+            "CountdownFrom": 10,
 
             "Message_RaffleOpen": "A raffle for: {0} has started! {1} can enter!",
             "Message_RaffleOpenUnlimitedEntry": "[Entry Cost: {0}] - Use `{1} <number>` to enter",
@@ -100,11 +104,13 @@ class Settings:
             "Message_RaffleClosed": "Entries have stopped for the raffle! You can no longer enter!",
             "Message_RaffleRefunded": "All {0} has been refunded for the current raffle.",
             "Message_Winner": "@{0}, you have won (with {1} entries)! Speak up in chat!",
+            "Message_WinnerCurrency": "@{0}, you have won (with {1} entries)! {2} {3} has been given to you.",
             "Message_DonateToSelfDisallowed": "You cannot donate entires to yourself.",
             "Message_CloseBeforeChoosing": "You must close the raffle before choosing winners.",
             "Message_NoEntrantsFound": "There are no entrants to choose from.",
             "Message_WinnerListing": "@{0}, the winners of the last raffle were: {1}",
             "Message_MultipleWinners": "{0} you have all won! Please speak up in chat!",
+            "Message_CountdownAnnouncement": "The raffle will close in {0}",
 
             "Manage_Command": "!manageraffle",
             "Manage_Permission": "Editor",
@@ -254,22 +260,33 @@ def Execute(data):
 # [Required] Tick Function
 # ------------------------
 def Tick():
-    global RaffleSettings, isRaffleActive, raffleStartTime
+    global RaffleSettings, isRaffleActive, raffleStartTime, countdownUsed
     if isRaffleActive:
-        if RaffleSettings.IsRaffleTimed and (time.time() - raffleStartTime) >= RaffleSettings.RaffleTimerDuration:
+        time_elapsed = (time.time() - raffleStartTime)
+        if RaffleSettings.IsRaffleTimed and time_elapsed >= RaffleSettings.RaffleTimerDuration:
             CloseRaffle()
+        # if RaffleSettings.IsRaffleTimed and RaffleSettings.CountdownToRaffleClose and \
+        #         int(RaffleSettings.CountdownFrom) > 0:
+        #     time_remaining = math.ceil(RaffleSettings.RaffleTimerDuration - time_elapsed)
+        #     if "{0}".format(int(time_remaining)) not in countdownUsed:
+        #         countdownUsed.append("{0}".format(int(time_remaining)))
+        #         if time_remaining and time_remaining <= int(RaffleSettings.CountdownFrom) and time_remaining % 2 != 0:
+        #             Parent.SendTwitchMessage("/me " + RaffleSettings.Message_CountdownAnnouncement.format(
+        #                 int(time_remaining)))
+
     return
 
 def ClearWinnersList():
     global winnerList
     winnerList = []
-    # Parent.Log("Donated Raffle", "Existing winners cleared")
+    Parent.SendTwitchMessage("/me Winners list cleared.")
     return
 
 def CloseRaffle():
-    global RaffleSettings, isRaffleActive
+    global RaffleSettings, isRaffleActive, countdownUsed
     if isRaffleActive:
         isRaffleActive = False
+        countdownUsed = []
         Parent.SendTwitchMessage(RaffleSettings.Message_RaffleClosed)
     return
 
@@ -358,20 +375,25 @@ def PickWinners(num):
                                                                                        entriesUsed))
 
                     if RaffleSettings.IsCurrencyGiveaway and RaffleSettings.CurrencyGiveawayAmount > 0:
-                        # Parent.Log("Donated Raffle", "Giving {0} {1} currency to {2}".format(
-                        #     int(RaffleSettings.CurrencyGiveawayAmount),
-                        #     Parent.GetCurrencyName(),
-                        #     Parent.GetDisplayName(winner)))
+                        Parent.Log("Donated Raffle", "Giving {0} {1} currency to {2}".format(
+                            int(RaffleSettings.CurrencyGiveawayAmount),
+                            Parent.GetCurrencyName(),
+                            Parent.GetDisplayName(winner)))
                         Parent.AddPoints(winner, int(RaffleSettings.CurrencyGiveawayAmount))
 
                     if RaffleSettings.AnnounceWinnersIndividually or num == 1:
-                        Parent.SendTwitchMessage(RaffleSettings.Message_Winner.format(Parent.GetDisplayName(winner),
-                                                                                      entriesUsed))
+                        Parent.SendTwitchMessage(RaffleSettings.Message_Winner.format(
+                            Parent.GetDisplayName(winner),
+                            entriesUsed,
+                            RaffleSettings.CurrencyGiveawayAmount,
+                            Parent.GetCurrencyName()))
 
-            # Parent.Log("Donated Raffle", "Full Winner List: {0}".format(", ".join(winnerList)))
             if not RaffleSettings.AnnounceWinnersIndividually and num > 1:
                 Parent.Log("Donated Raffle", RaffleSettings.Message_MultipleWinners.format(", ".join(winnerList)))
-                Parent.SendTwitchMessage("@" + RaffleSettings.Message_MultipleWinners.format(", @".join(winnerList)))
+                Parent.SendTwitchMessage(
+                        "@" + RaffleSettings.Message_MultipleWinners.format(", @".join(winnerList),
+                                                                            RaffleSettings.CurrencyGiveawayAmount,
+                                                                            Parent.GetCurrencyName()))
         else:
             Parent.SendTwitchMessage("/me " + RaffleSettings.Message_NoEntrantsFound)
     return
@@ -421,7 +443,9 @@ def RemoveEntrant(username):
     return entries_used
 
 def ResetRaffle():
-    global RaffleSettings, isRaffleActive, donatedEntries, raffleEntries, raffleStartTime, entryPurchases, winnerList
+    global RaffleSettings, isRaffleActive, donatedEntries, raffleEntries, raffleStartTime, entryPurchases, winnerList, \
+        selfEntry, countdownUsed
+    countdownUsed = []
     isRaffleActive = False
     raffleStartTime = 0
     raffleEntries = []

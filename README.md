@@ -133,8 +133,12 @@ fill in data about the raffle.
 - **Raffle Winner Notification** :: "@{0}, you have won (with {1} entries)! Speak up in chat!"
   - `{0}` - Winner's username
   - `{1}` - Total number of chances winner had in raffle
+  - `{2}` - *Currency Giveaway Amount* value
+  - `{3}` - Currency Name
 - **Multiple Winner Notification** :: "{0} you have all won! Please speak up in chat!"
   - `{0}` - Listing of tagged usernames that are in the full winners list
+  - `{1}` - *Currency Giveaway Amount* value
+  - `{2}` - Currency Name
 - **Not Enough Currency** :: "@{0} you don't have enough {1}!"
   - `{0}` - The user trying to purchase entries
   - `{1}` - Currency Name
@@ -209,3 +213,13 @@ There is a 2-second cooldown on sending messages.  This will be very
 apparent if you use the management command to choose multiple winners and
 the setting "Announce Winners Individually" is enabled. The names will 
 appear as separate messages in chat.
+
+# Version History
+
+## 0.0.1.1
+
+- Add currency giveaway amount to winner notification(s)
+
+## 0.0.1
+
+Initial release of script.
