@@ -6,3 +6,8 @@ baseurl: "/Streamlabs_DonatedRaffle"
 url: "https://bap14.github.io"
 include: [_pages]
 exclude: []
+site:
+  show_downloads: true
+  github:
+    exe_url: https://github.com/bap14/Streamlabs_DonatedRaffle/releases/download/v0.0.1.1/Streamlabs.Chatbot.Donated.Raffle.Setup-0.0.1.1.exe
+    zip_url: https://github.com/bap14/Streamlabs_DonatedRaffle/releases/download/v0.0.1.1/Streamlabs.Chatbot.Donated.Raffle.Setup-0.0.1.1.zip
