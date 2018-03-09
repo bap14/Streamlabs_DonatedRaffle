@@ -1,9 +1,4 @@
----
-title: Donated Raffle for Streamlabs Chatbot
-layout: page
----
-
-# Donated Raffle for Streamlabs Chatbot
+# Donated Raffle
 
 This raffle script mimics the GiveAway functionality. It adds the  ability for users to donate entries to others.
 
