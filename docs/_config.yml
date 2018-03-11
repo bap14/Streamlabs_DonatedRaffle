@@ -5,7 +5,7 @@ description: > # this means to ignore newlines until "baseurl:"
 baseurl: "/Streamlabs_DonatedRaffle"
 url: "https://bap14.github.io"
 navbar-links:
-  - Documentation: "documentation"
+  Documentation:
     - Installation: "install"
     - Configuration: "configure"
     - Management: "management"
