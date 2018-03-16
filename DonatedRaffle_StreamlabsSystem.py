@@ -354,7 +354,7 @@ def ParseUserInput(data):
     return parsed_input
 
 def PickWinners(num):
-    global RaffleSettings, winnerList, isRaffleActive
+    global RaffleSettings, winnerList, isRaffleActive, raffleEntries
     if isRaffleActive:
         Parent.SendTwitchMessage("/me " + RaffleSettings.Message_CloseBeforeChoosing)
     else:
