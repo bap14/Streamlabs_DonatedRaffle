@@ -35,7 +35,7 @@
   "WinnerListKeyword": {
     "type": "textbox",
     "value": "winners",
-    "label": "Winner List Keyword",
+    "label": "Recent Winner List Keyword",
     "tooltip": "First parameter after `Command` above users enter to get list of recent winners.",
     "group": "General"
   },
@@ -46,14 +46,39 @@
           "Everyone", "Regular", "Subscriber", "GameWisp Subscriber", "User_Specific", "Min_Rank", "Min_Points",
           "Min_Hours", "Moderator", "Editor", "Caster"
     ],
-    "label": "Winner List Permission",
+    "label": "Recent Winner List Permission",
     "tooltip": "Minimum user level to list recent winners",
     "group": "General"
   },
   "WinnerListPermissionInfo": {
     "type": "textbox",
     "value": "",
-    "label": "Winner List Permission Info",
+    "label": "Recent Winner List Permission Info",
+    "tooltip": "Set the user, rank or tier for selected permission (if applicable)",
+    "group": "General"
+  },
+  "ListAllWinnersKeyword": {
+    "type": "textbox",
+    "value": "all",
+    "label": "List All Winners Keyword",
+    "tooltip": "First parameter after `Command` above users enter to get full list of winners.",
+    "group": "General"
+  },
+  "ListAllWinnersPermission": {
+    "type": "dropdown",
+    "value": "Everyone",
+    "items": [
+          "Everyone", "Regular", "Subscriber", "GameWisp Subscriber", "User_Specific", "Min_Rank", "Min_Points",
+          "Min_Hours", "Moderator", "Editor", "Caster"
+    ],
+    "label": "List All Winners Permission",
+    "tooltip": "Minimum user level to list recent winners",
+    "group": "General"
+  },
+  "ListAllWinnersPermissionInfo": {
+    "type": "textbox",
+    "value": "",
+    "label": "List All Winners Permission Info",
     "tooltip": "Set the user, rank or tier for selected permission (if applicable)",
     "group": "General"
   },
@@ -226,6 +251,13 @@
     "group": "Error Messages"
   },
   "Message_WinnerListing": {
+    "type": "textbox",
+    "value": "@{0}, the most recent winners of the last raffle were: {1}",
+    "label": "Recent Winner Listing",
+    "tooltip": "Message to send when recent winner list is requested.",
+    "group": "Error Messages"
+  },
+  "Message_AllWinnersListing": {
     "type": "textbox",
     "value": "@{0}, the winners of the last raffle were: {1}",
     "label": "Recent Winner Listing",

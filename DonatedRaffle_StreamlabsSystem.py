@@ -33,6 +33,7 @@ isRaffleActive = False
 raffleEntries = []
 RaffleSettings = {}
 raffleStartTime = 0
+recentWinners = []
 selfEntry = {}
 settingsFile = os.path.join(os.path.dirname(__file__), "settings.json")
 snapshotDir = os.path.join(os.path.dirname(__file__), "snapshots")
@@ -89,6 +90,9 @@ class Settings:
             "WinnerListKeyword": "winners",
             "WinnerListPermission": "Everyone",
             "WinnerListPermissionInfo": "",
+            "ListAllWinnersKeyword": "all",
+            "ListAllWinnersPermission": "Everyone",
+            "ListAllWinnersPermissionInfo": "",
             "AnnounceWinnersIndividually": True,
             "CountdownToRaffleClose": False,
             "CountdownFrom": 10,
@@ -108,7 +112,8 @@ class Settings:
             "Message_DonateToSelfDisallowed": "You cannot donate entires to yourself.",
             "Message_CloseBeforeChoosing": "You must close the raffle before choosing winners.",
             "Message_NoEntrantsFound": "There are no entrants to choose from.",
-            "Message_WinnerListing": "@{0}, the winners of the last raffle were: {1}",
+            "Message_WinnerListing": "@{0}, the most recent winners of the last raffle were: {1}",
+            "Message_AllWinnersListing": "@{0}, the winners of the last raffle were: {1}",
             "Message_MultipleWinners": "{0} you have all won! Please speak up in chat!",
             "Message_CountdownAnnouncement": "The raffle will close in {0}",
 
@@ -223,11 +228,15 @@ def Execute(data):
                 else:
                     Parent.Log("Donated Raffle", "Invalid entry received: {0}".format(data.Message))
         elif not isRaffleActive and data.GetParam(0).lower() == RaffleSettings.Command.lower() \
-                and data.GetParamCount() == 2 and data.GetParam(1).lower() == RaffleSettings.WinnerListKeyword.lower() \
-                and len(winnerList) and \
-                Parent.HasPermission(data.User, RaffleSettings.WinnerListPermission,
+                and data.GetParamCount() == 2:
+                if data.GetParam(1).lower() == RaffleSettings.WinnerListKeyword.lower() and len(recentWinners) \
+                    and Parent.HasPermission(data.User, RaffleSettings.WinnerListPermission,
                                      RaffleSettings.WinnerListPermissionInfo):
-            Parent.SendTwitchMessage(RaffleSettings.Message_WinnerListing.format(data.User, ", ".join(winnerList)))
+                    AnnounceRecentWinners(data.User)
+                elif data.GetParam(1).lower() == RaffleSettings.ListAllWinnersKeyword.lower() and len(winnerList) \
+                    and Parent.HasPermission(data.User, RaffleSettings.ListAllWinnersPermission,
+                                     RaffleSettings.ListAllWinnersPermissionInfo):
+                    AnnounceAllWinners(data.User)
         elif data.GetParam(0).lower() == RaffleSettings.Manage_Command.lower() \
                 and Parent.HasPermission(data.User, RaffleSettings.Manage_Permission,
                                          RaffleSettings.Manage_PermissionInfo):
@@ -278,9 +287,19 @@ def Tick():
 
     return
 
+def AnnounceAllWinners(user):
+    global RaffleSettings, winnerList
+    Parent.SendTwitchMessage(RaffleSettings.Message_WinnerListing.format(user, ", ".join(winnerList)))
+    return
+
+def AnnounceRecentWinners(user):
+    global RaffleSettings, recentWinners
+    Parent.SendTwitchMessage(RaffleSettings.Message_WinnerListing.format(user, ", ".join(recentWinners)))
+    return
+
 def ClearWinnersList():
-    global winnerList
-    winnerList = []
+    global recentWinners
+    recentWinners = []
     Parent.SendTwitchMessage("/me Winners list cleared.")
     return
 
@@ -366,11 +385,12 @@ def PickWinners(num):
         if len(raffleEntries):
             for x in range(0, num):
                 if len(raffleEntries):
-                    for i in range(1, randint(5,25)):
+                    for i in range(1, randint(5, 25)):
                         shuffle(raffleEntries)
 
                     randomIndex = randint(1, len(raffleEntries)) - 1
                     winner = raffleEntries[randomIndex]
+                    recentWinners.append(winner)
                     winnerList.append(winner)
                     entriesUsed = RemoveEntrant(winner)
                     Parent.Log("Donated Raffle", "Winner: {0} ({1} entries)".format(Parent.GetDisplayName(winner),
@@ -391,9 +411,9 @@ def PickWinners(num):
                             Parent.GetCurrencyName()))
 
             if not RaffleSettings.AnnounceWinnersIndividually and num > 1:
-                Parent.Log("Donated Raffle", RaffleSettings.Message_MultipleWinners.format(", ".join(winnerList)))
+                Parent.Log("Donated Raffle", RaffleSettings.Message_MultipleWinners.format(", ".join(recentWinners)))
                 Parent.SendTwitchMessage(
-                        "@" + RaffleSettings.Message_MultipleWinners.format(", @".join(winnerList),
+                        "@" + RaffleSettings.Message_MultipleWinners.format(", @".join(recentWinners),
                                                                             RaffleSettings.CurrencyGiveawayAmount,
                                                                             Parent.GetCurrencyName()))
         else:
