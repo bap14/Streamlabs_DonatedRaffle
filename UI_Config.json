@@ -346,7 +346,7 @@
     "type": "button",
     "label": "Open Raffle",
     "tooltip": "Open raffle for entry",
-    "wsevent": "DONATEDRAFFLE_OPEN",
+    "wsevent": "DONATEDRAFFLE_OPEN_BUTTON",
     "function": "OpenRaffle",
     "group": "Raffle Actions"
   },
@@ -355,7 +355,7 @@
     "label": "Close Raffle",
     "tooltip": "Close raffle for entry",
     "function": "CloseRaffle",
-    "wsevent": "DONATEDRAFFLE_CLOSE",
+    "wsevent": "DONATEDRAFFLE_CLOSE_BUTTON",
     "group": "Raffle Actions"
   },
   "Button_ResetRaffle": {
@@ -363,7 +363,7 @@
     "label": "Reset Raffle",
     "tooltip": "Clear raffle entries and winners",
     "function": "ResetRaffle",
-    "wsevent": "DONATEDRAFFLE_RESET",
+    "wsevent": "DONATEDRAFFLE_RESET_BUTTON",
     "group": "Raffle Actions"
   },
   "Button_RefundRaffle": {
@@ -371,7 +371,7 @@
     "label": "Refund Raffle",
     "tooltip": "Refund all raffle entries",
     "function": "RefundRaffleEntries",
-    "wsevent": "DONATEDRAFFLE_REFUND",
+    "wsevent": "DONATEDRAFFLE_REFUND_BUTTON",
     "group": "Raffle Actions"
   },
   "Button_PickRaffle": {
@@ -379,7 +379,7 @@
     "label": "Pick Winner",
     "tooltip": "Pick a winner",
     "function": "PickSingleWinner",
-    "wsevent": "DONATEDRAFFLE_CHOOSE",
+    "wsevent": "DONATEDRAFFLE_CHOOSE_BUTTON",
     "group": "Raffle Actions"
   },
   "Button_ClearRaffleWinners": {
@@ -387,7 +387,7 @@
     "label": "Clear Winners List",
     "tooltip": "Clear existing winners to pick secondary list",
     "function": "ClearWinnersList",
-    "wsevent": "DONATEDRAFFLE_CLEAR_WINNERS",
+    "wsevent": "DONATEDRAFFLE_CLEAR_WINNERS_BUTTON",
     "group": "Raffle Actions"
   }
 }

@@ -201,14 +201,7 @@ def Execute(data):
 
                             if allowed_to_donate:
                                 if ValidateEntryPurchase(data.User, user_input):
-                                    PurchaseEntry(data.User, user_input["numEntries"])
-                                    donatedEntries[data.User][user_input["target"]] += user_input["numEntries"]
-                                    Parent.Log("Donated Raffle",
-                                               "{0} donated {1} entries to {2}.".format(Parent.GetDisplayName(data.User),
-                                                                                        user_input["numEntries"],
-                                                                                        Parent.GetDisplayName(user_input["target"])))
-                                    for i in range(user_input["numEntries"]):
-                                        raffleEntries.append(user_input["target"])
+                                    DonateEntry(data.User, user_input["numEntries"], user_input["target"])
                                 else:
                                     Parent.SendTwitchMessage(
                                         RaffleSettings.Message_MaxEntriesExceeded.format(data.User,
@@ -218,9 +211,7 @@ def Execute(data):
                     # Regular raffle entry
                     else:
                         if ValidateEntryPurchase(data.User, user_input):
-                            PurchaseEntry(data.User, user_input["numEntries"])
-                            for i in range(user_input["numEntries"]):
-                                raffleEntries.append(data.User)
+                            SelfEntry(data.User, user_input["numEntries"])
                         else:
                             Parent.SendTwitchMessage(
                                 RaffleSettings.Message_MaxEntriesExceeded.format(data.User,
@@ -309,7 +300,23 @@ def CloseRaffle():
     if isRaffleActive:
         isRaffleActive = False
         countdownUsed = []
+        Parent.BroadcastWsEvent("DONATEDRAFFLE_CLOSE", "{}")
         Parent.SendTwitchMessage(RaffleSettings.Message_RaffleClosed)
+    return
+
+def DonateEntry(user, numEntries, target):
+    global donatedEntries, raffleEntries
+    if PurchaseEntry(user, numEntries):
+        donatedEntries[user][target] += numEntries
+        Parent.BroadcastWsEvent("DONATEDRAFFLE_DONATE", json.dumps({
+            "donator": Parent.GetDisplayName(user),
+            "donatee": Parent.GetDisplayName(target),
+            "entries": numEntries
+        }))
+        Parent.Log("Donated Raffle", "{0} donated {1} entries to {2}.".format(Parent.GetDisplayName(user), numEntries,
+                                                                              Parent.GetDisplayName(target)))
+        for i in range(numEntries):
+            raffleEntries.append(target)
     return
 
 def NormalizeUsername(name):
@@ -335,6 +342,10 @@ def OpenRaffle():
         if RaffleSettings.EnableDonations:
             donationInfo = " " + RaffleSettings.Message_RaffleOpenDonateEntry.format(RaffleSettings.Command)
 
+        Parent.BroadcastWsEvent("DONATEDRAFFLE_OPEN", json.dumps({
+            "prize": RaffleSettings.prize,
+            "permission": RaffleSettings.Permission
+        }))
         Parent.SendTwitchMessage("/me " + RaffleSettings.Message_RaffleOpen.format(RaffleSettings.Prize,
                                                                                    RaffleSettings.Permission))
         Parent.SendTwitchMessage(maxInfo + donationInfo)
@@ -394,6 +405,10 @@ def PickWinners(num):
                     recentWinners.append(winner)
                     winnerList.append(winner)
                     entriesUsed = RemoveEntrant(winner)
+                    Parent.BroadcastWsEvent("DONATEDRAFFLE_WINNER", json.dumps({
+                        "winner": Parent.GetDisplayName(winner),
+                        "entriesUsed": entriesUsed
+                    }))
                     Parent.Log("Donated Raffle", "Winner: {0} ({1} entries)".format(Parent.GetDisplayName(winner),
                                                                                        entriesUsed))
 
@@ -426,6 +441,7 @@ def PickSingleWinner():
 
 def PurchaseEntry(user, num):
     global RaffleSettings, entryPurchases
+    purchased = True
     if Parent.RemovePoints(user, RaffleSettings.EntryCost * int(num)):
         if user not in entryPurchases:
             entryPurchases[user] = 0
@@ -433,7 +449,8 @@ def PurchaseEntry(user, num):
         entryPurchases[user] += int(num)
     else:
         Parent.SendTwitchMessage(RaffleSettings.Message_NotEnoughCurrency.format(user, Parent.GetCurrencyName()))
-    return
+        purchased = False
+    return purchased
 
 def RefundRaffleEntries():
     global RaffleSettings, entryPurchases, isRaffleActive
@@ -478,6 +495,17 @@ def ResetRaffle(announce=True):
     winnerList = []
     if announce:
         Parent.SendTwitchMessage("/me Raffle Reset")
+    return
+
+def SelfEntry(user, numEntries):
+    global raffleEntries
+    if PurchaseEntry(user, numEntries):
+        Parent.BroadcastWsEvent("DONATEDRAFFLE_ENTER", json.dumps({
+            "user": Parent.GetDisplayName(user),
+            "entries": numEntries
+        }))
+        for i in range(numEntries):
+            raffleEntries.append(user)
     return
 
 # ----------------

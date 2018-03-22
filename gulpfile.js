@@ -66,7 +66,10 @@ function getScriptSources() {
         '*.py',
         'LICENSE',
         'README.md',
-        'UI_Config.json'
+        'UI_Config.json',
+        'index.html',
+        'styles.css',
+        'client.js'
     ]);
 }
 
