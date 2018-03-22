@@ -3,15 +3,15 @@
 # ------------------------
 import sys
 import clr
-clr.AddReference("IronPython.SQLite.dll")
-clr.AddReference("IronPython.Modules.dll")
 import os
 import codecs
 import json
 import re
 import time
-# import math
+# import math # for timed raffles
 from random import *
+clr.AddReference("IronPython.SQLite.dll")
+clr.AddReference("IronPython.Modules.dll")
 
 # ------------------------
 # [Required] Script Information
@@ -20,7 +20,7 @@ ScriptName = "Donated Raffle"
 Website = "https://github.com/bap14/Streamlabs_DonatedRaffle"
 Description = "Creates a raffle system that allows viewers to 'donate' chances to other viewers"
 Creator = "BleepBlamBleep"
-Version = "0.0.1.1"
+Version = "0.0.1.2-dev"
 
 # ------------------------
 # Set Variables
@@ -136,7 +136,7 @@ class Settings:
         return
 
     def LoadSnapshot(self, key):
-        global fileEncoding, settingsFile
+        global fileEncoding, settingsFile, winnerList, entryPurchases, raffleEntries
         file_path = os.path.join(snapshotDir, key + ".json")
         Parent.Log("Donated Raffle", "Loading snapshot from: {0}".format(file_path))
         if os.path.isfile(file_path):
@@ -145,7 +145,9 @@ class Settings:
                 self.config.update(json.load(f, encoding=fileEncoding))
 
             self.SaveSettings(settingsFile)
-            Parent.SendTwitchMessage("Loaded raffle {0}".format(key))
+            ClearWinnersList()
+            ResetRaffle()
+            Parent.SendTwitchMessage("Loaded raffle '{0}'.  Winners and entries have been reset.".format(key))
         else:
             Parent.SendTwitchMessage("Snapshot '{0}' does not exist.".format(key))
         return
@@ -446,11 +448,11 @@ def ResetRaffle():
     global RaffleSettings, isRaffleActive, donatedEntries, raffleEntries, raffleStartTime, entryPurchases, winnerList, \
         selfEntry, countdownUsed
     countdownUsed = []
-    isRaffleActive = False
-    raffleStartTime = 0
-    raffleEntries = []
-    entryPurchases = {}
     donatedEntries = {}
+    entryPurchases = {}
+    isRaffleActive = False
+    raffleEntries = []
+    raffleStartTime = 0
     selfEntry = {}
     winnerList = []
     Parent.SendTwitchMessage("/me Raffle Reset")
