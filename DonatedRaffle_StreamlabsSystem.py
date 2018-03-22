@@ -150,8 +150,8 @@ class Settings:
                 self.config.update(json.load(f, encoding=fileEncoding))
 
             self.SaveSettings(settingsFile)
-            ClearWinnersList()
-            ResetRaffle()
+            ClearWinnersList(announce=False)
+            ResetRaffle(announce=False)
             Parent.SendTwitchMessage("Loaded raffle '{0}'.  Winners and entries have been reset.".format(key))
         else:
             Parent.SendTwitchMessage("Snapshot '{0}' does not exist.".format(key))
@@ -297,10 +297,11 @@ def AnnounceRecentWinners(user):
     Parent.SendTwitchMessage(RaffleSettings.Message_WinnerListing.format(user, ", ".join(recentWinners)))
     return
 
-def ClearWinnersList():
+def ClearWinnersList(announce=True):
     global recentWinners
     recentWinners = []
-    Parent.SendTwitchMessage("/me Winners list cleared.")
+    if announce:
+        Parent.SendTwitchMessage("/me Winners list cleared.")
     return
 
 def CloseRaffle():
@@ -464,7 +465,7 @@ def RemoveEntrant(username):
     entries_used = start_len - end_len
     return entries_used
 
-def ResetRaffle():
+def ResetRaffle(announce=True):
     global RaffleSettings, isRaffleActive, donatedEntries, raffleEntries, raffleStartTime, entryPurchases, winnerList, \
         selfEntry, countdownUsed
     countdownUsed = []
@@ -475,7 +476,8 @@ def ResetRaffle():
     raffleStartTime = 0
     selfEntry = {}
     winnerList = []
-    Parent.SendTwitchMessage("/me Raffle Reset")
+    if announce:
+        Parent.SendTwitchMessage("/me Raffle Reset")
     return
 
 # ----------------
