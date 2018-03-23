@@ -35,16 +35,35 @@ RaffleSettings = {}
 raffleStartTime = 0
 recentWinners = []
 selfEntry = {}
-settingsFile = os.path.join(os.path.dirname(__file__), "settings.json")
+settingsFile = os.path.join(os.path.dirname(__file__), "settings", "settings.json")
 snapshotDir = os.path.join(os.path.dirname(__file__), "snapshots")
 winnerList = []
 
 class Settings:
     def __init__(self, settings_file=None):
-        global fileEncoding
+        global fileEncoding, settingsFile
         self.config = self.getDefaultSettings()
-        
-        if settings_file is not None and os.path.isfile(settings_file):
+
+        settings_dir = os.path.dirname(settingsFile)
+        if settings_file is not None:
+            settings_dir = os.path.dirname(settings_file)
+
+        if not os.path.isdir(settings_dir):
+            os.makedirs(settings_dir)
+
+        Parent.Log("Donated Raffle", "Original Settings File: {0}".format(settings_file))
+        if settings_file is not None and not os.path.isfile(settings_file):
+            path_tuple = os.path.split(settings_file)
+            settingsFilePath = path_tuple[0].split(os.sep)
+            settingsFilePath.pop()
+            old_settings_file = os.path.join(os.sep.join(settingsFilePath), path_tuple[1])
+            if os.path.isfile(old_settings_file):
+                os.rename(old_settings_file, settings_file)
+            if os.path.isfile(old_settings_file.replace('json', 'js')):
+                os.rename(old_settings_file.replace('json', 'js'), settings_file.replace('json', 'js'))
+
+        if os.path.isfile(settings_file):
+            Parent.Log("Donated Raffle", "Loading settings file: {0}".format(settings_file))
             with codecs.open(settings_file, encoding=fileEncoding, mode='r') as f:
                 self.config.update(json.load(f, encoding=fileEncoding))
         return
@@ -57,8 +76,10 @@ class Settings:
 
     def ReloadSettings(self, data):
         global fileEncoding
+        Parent.Log("Donated Raffle", "Reloading settings")
         self.config = self.getDefaultSettings()
         self.config.update(json.loads(data, encoding=fileEncoding))
+        Parent.BroadcastWsEvent("DONATEDRAFFLE_UPDATE_SETTINGS", json.dumps(self.config))
         return
 
     def SaveSettings(self, settings_file):
@@ -127,7 +148,9 @@ class Settings:
             "Manage_RefundKeyword": "refund",
             "Manage_ResetKeyword": "reset",
             "Manage_SaveSnapshotKeyword": "save",
-            "Manage_LoadSnapshotKeyword": "load"
+            "Manage_LoadSnapshotKeyword": "load",
+
+            "UI_RowsVisible": 4
         }.copy()
 
     def SaveSnapshot(self, key):
@@ -168,7 +191,7 @@ def Init():
     return
 
 def ReloadSettings(jsonData):
-    global RaffleSettings
+    global RaffleSettings, settingsFile
     RaffleSettings.ReloadSettings(jsonData)
     return
 

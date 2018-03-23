@@ -67,10 +67,9 @@ function getScriptSources() {
         'LICENSE',
         'README.md',
         'UI_Config.json',
-        'index.html',
-        'styles.css',
-        'client.js'
-    ]);
+        'overlay/*',
+        'overlay/**/*'
+    ], { base: './' });
 }
 
 function getCurrentVersion() {

@@ -1,5 +1,5 @@
 {
-  "output_file": "settings.json",
+  "output_file": "settings/settings.json",
   "Prize": {
     "type": "textbox",
     "value": "",
@@ -341,6 +341,13 @@
     "label": "Keyword To Load A Raffle",
     "tooltip": "Keyword used to load a raffle snapshot",
     "group": "Management"
+  },
+  "UI_RowsVisible": {
+    "type": "numberbox",
+    "value": 4,
+    "label": "Number of Rows Visible",
+    "tooltip": "Only show this many items in the list at once (others will be rotated out)",
+    "group": "UI Settings"
   },
   "Button_OpenRaffle": {
     "type": "button",

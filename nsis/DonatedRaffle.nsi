@@ -73,6 +73,10 @@ SectionGroup "!Chatbot Script Files" scriptFiles
     File "..\UI_Config.json"
     File "..\LICENSE"
     File "..\README.md"
+    File "..\API_Key.js"
+    File "..\overlay\index.html"
+    File "..\overlay\client.js"
+    File "..\overlay\style.css"
   SectionEnd
 SectionGroupEnd
 
