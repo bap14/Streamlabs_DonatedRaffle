@@ -1,0 +1,22 @@
+header.docs-navbar {
+  background-color: #2b4f81; }
+  header.docs-navbar .btn-docs-download {
+    border: 2px solid #ffa500;
+    color: #ffa500;
+    margin-left: 1em;
+    text-align: center; }
+    header.docs-navbar .btn-docs-download .icon > svg {
+      fill: #ffa500;
+      margin: auto 0;
+      vertical-align: middle; }
+  header.docs-navbar .btn-docs-download:hover {
+    background-color: #ffa500;
+    border-color: #ffa500;
+    color: #2b4f81; }
+    header.docs-navbar .btn-docs-download:hover .icon > svg {
+      fill: #2b4f81; }
+
+html, body {
+  font-family: Nunito, arial, sans-serif; }
+
+/*# sourceMappingURL=style.css.map */
