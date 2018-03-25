@@ -2,8 +2,8 @@
 # Site
 
 title: Donated Raffle for Streamlabs Chatbot
-url: "https://bap14.github.io/Streamlabs_Chatbot"
-baseurl: ""
+url: "https://bap14.github.io"
+baseurl: "/Streamlabs_DonatedRaffle"
 google_analytics_key:
 disqus_shortname:
 newsletter_action:
