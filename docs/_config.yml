@@ -87,20 +87,25 @@ social_icons:
 types:
   - Document
   - Video
+  - Page
 
 _comments:
 
 data:
+  navigation:
+    - name: Home
+      link: /
+    - name: Documentation
+      link: /documentation
+    - name: Demo
+      link: /demo
   footer:
-    -
-      social_icon: Twitter
+    - social_icon: Twitter
       link: https://twitter.com/bleepblambleep
       name:
-    -
-      social_icon: Twitch
+    - social_icon: Twitch
       link: https://twitch.tv/bleepblambleep
       name:
-    -
-      social_icon: Github
+    - social_icon: Github
       link: https://github.com/bap14
       name:
