@@ -332,9 +332,9 @@ def DonateEntry(user, numEntries, target):
     if PurchaseEntry(user, numEntries):
         donatedEntries[user][target] += numEntries
         Parent.BroadcastWsEvent("DONATEDRAFFLE_DONATE", json.dumps({
-            "donator": Parent.GetDisplayName(user),
-            "donatee": Parent.GetDisplayName(target),
-            "entries": numEntries
+            "user": Parent.GetDisplayName(target),
+            "entries": numEntries,
+            "donator": Parent.GetDisplayName(user)
         }))
         Parent.Log("Donated Raffle", "{0} donated {1} entries to {2}.".format(Parent.GetDisplayName(user), numEntries,
                                                                               Parent.GetDisplayName(target)))
@@ -366,7 +366,7 @@ def OpenRaffle():
             donationInfo = " " + RaffleSettings.Message_RaffleOpenDonateEntry.format(RaffleSettings.Command)
 
         Parent.BroadcastWsEvent("DONATEDRAFFLE_OPEN", json.dumps({
-            "prize": RaffleSettings.prize,
+            "prize": RaffleSettings.Prize,
             "permission": RaffleSettings.Permission
         }))
         Parent.SendTwitchMessage("/me " + RaffleSettings.Message_RaffleOpen.format(RaffleSettings.Prize,

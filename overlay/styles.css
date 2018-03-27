@@ -12,12 +12,53 @@ body {
 }
 #stage > .background {
     bottom: 0;
-    left: 10%;
+    left: 0;
     position: absolute;
     top: 0;
-    right: 10%;
+    right: 0;
 
     overflow: hidden;
+}
+
+#stage > .background > h2 {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 0 0 8px 10px red;
+}
+
+#stage > h1 {
+    height: 37px;
+    font-size: 2.0em;
+
+    margin: 0 0 8px 0;
+}
+
+#entryCollection li {
+    background: linear-gradient(red, #333);
+
+    border-radius: 8px;
+
+    color: white;
+}
+
+#entryCollection li .user {}
+
+#entryCollection li .badge {
+    border-radius: 4px;
+    margin-left: 4px;
+}
+
+#entryCollection li .entries {
+    background-color: #009926;
+    color: white;
+    float: right;
+    margin: 0 0 0 auto;
+}
+
+#entryCollection li .donation {
+    background-color: #6f42c1;
+    color: #f1f1f1;
 }
 
 .raining-currency {

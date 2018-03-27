@@ -7,6 +7,8 @@ function DonatedRaffleUi(apiKey) {
     this.serviceUrl = "ws://127.0.0.1:3337/streamlabs";
     this.settings = settings;
     this.socket = null;
+    this.winners = [];
+    this.winnerInterval = null;
 
     this.initialize();
 }
@@ -75,6 +77,11 @@ DonatedRaffleUi.prototype = {
         };
     },
 
+    hideRaffleTitle: function () {
+        if ($('#title')) {
+            $('#title').fadeOut(500).html('');
+        }
+    },
     makeItRain: function () {
         var bill,
             billCount = 25,
@@ -89,7 +96,7 @@ DonatedRaffleUi.prototype = {
         for (n; n < billCount; n++) {
             leftPosition = Math.floor(randSeed * Math.random());
             delayTime = Math.random() * 20;
-            speed = (Math.random() * 10);
+            speed = (Math.random() * 5);
 
             bill = $('<figure class="raining-currency">').css({
                 left: leftPosition + 'px',
@@ -104,31 +111,99 @@ DonatedRaffleUi.prototype = {
         }
         setTimeout(function () { $('#stage > .background').html(''); }, 15000);
     },
-
-    raffleOpened: function () {
-        console.info('Raffle Opened!');
+    raffleOpened: function (data) {
+        this.showRaffleTitle(data.prize);
     },
     raffleClosed: function () {
-        console.info('Raffle Closed!');
+        this.hideRaffleTitle();
+        $('#stage').fadeOut(800).html('').show();
     },
-    winnerChosen: function (data) {
-        console.log('And the winner is: "' + data.winner + '"');
-        if (this.settings.IsCurrencyGiveaway && parseInt(this.settings.CurrencyGiveawayAmount) > 0) {
-            this.makeItRain();
+    showRaffleTitle: function (title) {
+        var titleEl = $('#prize');
+        if (!titleEl.length) {
+            titleEl = $('<h1>').attr('id', 'prize').hide();
+            $('#stage').append(titleEl);
+        }
+
+        if (titleEl && titleEl.is(':visible')) {
+            titleEl.fadeOut(500);
+        }
+        titleEl.html(title).fadeIn(800);
+    },
+    showWinner: function () {
+        if (this.winners.length) {
+            if (this.settings.IsCurrencyGiveaway && parseInt(this.settings.CurrencyGiveawayAmount) > 0) {
+                // this.makeItRain();
+            }
+
+            var winner = $('<h2>').html(this.winners.shift().winner);
+            console.log(this.winners);
+            $('.background', $('#stage')).append(winner);
+            $(winner).fadeIn(600);
+            setTimeout($.proxy(function () {
+                $('#stage').children('.background h2').fadeOut(600).remove();
+            }, this), 5000);
         }
     },
+    showWinners: function () {
+        console.log(this.winnerInterval);
+        console.log(typeof this.winnerInterval);
+        if (typeof this.winnerInterval === "undefined" || this.winnerInterval === null) {
+            this.showWinner();
+            this.winnerInterval = setInterval($.proxy(this.showWinner, this), 7000);
+        }
+    },
+    winnerChosen: function (data) {
+        this.winners.push(data);
+        //this.showWinners();
+        console.log(this.winners);
+    },
     userEntered: function (data) {
-        console.log('"' + data.user + '" just entered with ' + data.entries);
+        var entryCollection = $('#entryCollection');
+        if (!entryCollection.length) {
+            entryCollection = $('<ul class="collection"></ul>').attr('id', 'entryCollection');
+            $('#stage').append(entryCollection);
+        }
+
+        var winner = $('<li>').addClass('collection-item')
+            .append($('<span class="user">').html(data.user))
+            .append($('<span>').addClass('badge').addClass('entries').attr('data-badge-caption', 'entries').html(data.entries));
+        entryCollection.append(winner);
+
+        if (entryCollection.is(':hidden')) {
+            entryCollection.fadeIn(500);
+        }
+
+        if ($('li', entryCollection).length > parseInt(this.settings.UI_RowsVisible)) {
+            $('li:first-child', entryCollection).fadeOut(400).remove();
+            $('li:last-child', entryCollection).fadeIn(600);
+        }
     },
     userDonated: function (data) {
-        console.log('"' + data.donatee + '" was given ' + data.entries + ' entries ' +
-                    'thanks to "' + data.donator + '".  Thank you!');
+        var entryCollection = $('#entryCollection');
+        if (!entryCollection.length) {
+            entryCollection = $('<ul class="collection"></ul>').attr('id', 'entryCollection');
+            $('#stage').append(entryCollection);
+        }
+
+        var winner = $('<li>').addClass('collection-item')
+            .append($('<span class="user">').html(data.user))
+            .append($('<span>').addClass('badge').addClass('entries').attr('data-badge-caption', 'entries').html(data.entries))
+            .append($('<span>').addClass('badge').addClass('donation').attr('data-badge-caption', 'donated').html(data.donator));
+        entryCollection.append(winner);
+
+        if (entryCollection.is(':hidden')) {
+            entryCollection.fadeIn(500);
+        }
+
+        if ($('li', entryCollection).length > parseInt(this.settings.UI_RowsVisible)) {
+            $('li:first-child', entryCollection).fadeOut(400).remove();
+            $('li:last-child', entryCollection).fadeIn(600);
+        }
     },
 
     updateSettings: function (settings) {
         this.settings = settings;
-        console.log('Updated Settings');
-        console.log(this.settings);
     }
 };
 
