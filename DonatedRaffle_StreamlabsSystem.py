@@ -509,14 +509,14 @@ def RefundRaffleEntries():
 def RemoveEntrant(username):
     global raffleEntries
     start_len = len(raffleEntries)
-    raffleEntries = filter(lambda x: x != username, raffleEntries)
+    raffleEntries = filter(lambda x: x.lower() != username.lower(), raffleEntries)
     end_len = len(raffleEntries)
     entries_used = start_len - end_len
     return entries_used
 
 def ResetRaffle(announce=True):
     global RaffleSettings, isRaffleActive, donatedEntries, raffleEntries, raffleStartTime, entryPurchases, winnerList, \
-        selfEntry, countdownUsed
+        selfEntry, countdownUsed, recentWinners
     countdownUsed = []
     donatedEntries = {}
     entryPurchases = {}
@@ -524,6 +524,7 @@ def ResetRaffle(announce=True):
     raffleEntries = []
     raffleStartTime = 0
     selfEntry = {}
+    recentWinners = []
     winnerList = []
     if announce:
         Parent.SendTwitchMessage("/me Raffle Reset")
