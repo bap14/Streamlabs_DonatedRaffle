@@ -74,9 +74,19 @@ SectionGroup "!Chatbot Script Files" scriptFiles
     File "..\LICENSE"
     File "..\README.md"
     File "..\API_Key.js"
+  SectionEnd
+  Section
+    SetOutPath "$INSTDIR\Services\Scripts\DonatedRaffle\overlay"
+    SetOverwrite ifnewer
+    SectionIn RO
     File "..\overlay\index.html"
     File "..\overlay\client.js"
     File "..\overlay\styles.css"
+  SectionEnd
+  Section
+    SetOutPath "$INSTDIR\Services\Scripts\DonatedRaffle\overlay\images"
+    SetOverwrite ifnewer
+    SectionIn RO
     File "..\overlay\images\currency.svg"
   SectionEnd
 SectionGroupEnd
