@@ -9,7 +9,6 @@ function DonatedRaffleUi(apiKey) {
     this.settings = settings;
     this.socket = null;
     this.winners = [];
-    this.winnerInterval = null;
 
     this.initialize();
 }
@@ -76,7 +75,7 @@ DonatedRaffleUi.prototype = {
             else if (message.event === DonatedRaffleUi.events.DONATE && this.settings.Overlay_DisplayRaffleEntries) {
                 that.userDonated(message.data);
             }
-            else if (message.event === DonatedRaffleUi.UPDATE_SETTINGS) {
+            else if (message.event === DonatedRaffleUi.events.UPDATE_SETTINGS) {
                 that.updateSettings(message.data);
             }
         };
