@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "Streamlabs Chatbot Donated Raffle"
-!define PRODUCT_VERSION "0.0.1.1"
+!define PRODUCT_VERSION "0.0.1.2"
 !define PRODUCT_PUBLISHER "BleepBlamBleep"
 !define PRODUCT_WEB_SITE "https://github.com/bap14/Streamlabs_DonatedRaffle"
 
@@ -76,7 +76,8 @@ SectionGroup "!Chatbot Script Files" scriptFiles
     File "..\API_Key.js"
     File "..\overlay\index.html"
     File "..\overlay\client.js"
-    File "..\overlay\style.css"
+    File "..\overlay\styles.css"
+    File "..\overlay\images\currency.svg"
   SectionEnd
 SectionGroupEnd
 
