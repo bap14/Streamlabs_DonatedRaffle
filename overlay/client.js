@@ -3,6 +3,7 @@
 
 function DonatedRaffleUi(apiKey) {
     this.apiKey = apiKey;
+    this.displayingWinners = false;
     this.reconnectInterval = 10000;
     this.serviceUrl = "ws://127.0.0.1:3337/streamlabs";
     this.settings = settings;
@@ -26,17 +27,21 @@ DonatedRaffleUi.prototype = {
     initialize: function () {
         $('#stage > h1').hide();
         $('#stage > ul').hide();
-        this.connect();
+        if (/[?&]debug=/i.test(location.search)) {
+            this.sendDebugEvents();
+        } else {
+            this.connect();
+        }
     },
 
     connect: function () {
-        var that = this;
+        let that = this;
         this.socket = new WebSocket(that.serviceUrl);
-        this.socket.onclose = function (evt) {
+        this.socket.onclose = (evt) => {
             setTimeout(jQuery.proxy(that.connect, that), that.reconnectInterval);
         },
-        this.socket.onopen = function (evt) {
-            var auth = {
+        this.socket.onopen = (evt) => {
+            let auth = {
                 author: "BleepBlamBleep",
                 website: "https://bap14.github.io/Streamlabs_DonatedRaffle",
                 api_key: that.apiKey,
@@ -44,11 +49,11 @@ DonatedRaffleUi.prototype = {
             };
             that.socket.send(JSON.stringify(auth));
         };
-        this.socket.onerror = function (evt) {
+        this.socket.onerror = (evt) => {
             console.error(evt);
         };
-        this.socket.onmessage = function (evt) {
-            var message = JSON.parse(evt.data);
+        this.socket.onmessage = (evt) => {
+            let message = JSON.parse(evt.data);
             if (message.hasOwnProperty('data') && typeof message.data === "string") {
                 message.data = JSON.parse(message.data);
             }
@@ -56,19 +61,19 @@ DonatedRaffleUi.prototype = {
                 message.data = {};
             }
 
-            if (message.event === DonatedRaffleUi.events.OPEN) {
+            if (message.event === DonatedRaffleUi.events.OPEN && this.settings.Overlay_DisplayRaffleOpen) {
                 that.raffleOpened(message.data);
             }
             else if (message.event === DonatedRaffleUi.events.CLOSE) {
                 that.raffleClosed();
             }
-            else if (message.event === DonatedRaffleUi.events.WINNER) {
+            else if (message.event === DonatedRaffleUi.events.WINNER && this.settings.Overlay_DisplayWinners) {
                 that.winnerChosen(message.data);
             }
-            else if (message.event === DonatedRaffleUi.events.ENTER) {
+            else if (message.event === DonatedRaffleUi.events.ENTER && this.settings.Overlay_DisplayRaffleEntries) {
                 that.userEntered(message.data);
             }
-            else if (message.event === DonatedRaffleUi.events.DONATE) {
+            else if (message.event === DonatedRaffleUi.events.DONATE && this.settings.Overlay_DisplayRaffleEntries) {
                 that.userDonated(message.data);
             }
             else if (message.event === DonatedRaffleUi.UPDATE_SETTINGS) {
@@ -76,27 +81,38 @@ DonatedRaffleUi.prototype = {
             }
         };
     },
-
+    getEntryCollection: function () {
+        let entryCollection = $('#entryCollection');
+        if (!entryCollection.length) {
+            entryCollection = $('<ul class="collection"></ul>').attr('id', 'entryCollection');
+            $('#stage').append(entryCollection);
+        }
+        if (entryCollection.is(':hidden')) {
+            entryCollection.show();
+        }
+        return entryCollection;
+    },
     hideRaffleTitle: function () {
         if ($('#title')) {
             $('#title').fadeOut(500).html('');
         }
     },
     makeItRain: function () {
-        var bill,
-            billCount = 25,
+        let bill,
+            billCount = this.settings.Overlay_NumberOfBills,
             delayTime,
             layer = 0,
             leftPosition = 0,
             n = 0,
-            randSeed = $(window).width(),
+            randSeed = $('#stage').width(),
             speed,
-            topPosition = -150;
+            topPosition = -65;
 
         for (n; n < billCount; n++) {
             leftPosition = Math.floor(randSeed * Math.random());
-            delayTime = Math.random() * 20;
-            speed = (Math.random() * 5);
+            delayTime = Math.random() * this.settings.Overlay_CurrencyFallDelay;
+            speed = Math.random() * this.settings.Overlay_CurrencyFallSpeed;
+            layer = Math.floor(Math.random() * 3) + 1;
 
             bill = $('<figure class="raining-currency">').css({
                 left: leftPosition + 'px',
@@ -106,10 +122,12 @@ DonatedRaffleUi.prototype = {
                 zIndex: layer,
                 width: '50px'
             });
-            $(bill).prepend('<img src="images/currency.svg" alt="Stream Currency">');
-            $('#stage > .background').append(bill);
+            $(bill).html('<img src="images/currency.svg" alt="Stream Currency">');
+            $('#stage').append(bill);
+            setTimeout(function () {
+                $(bill).remove();
+            }, 4);
         }
-        setTimeout(function () { $('#stage > .background').html(''); }, 15000);
     },
     raffleOpened: function (data) {
         this.showRaffleTitle(data.prize);
@@ -119,91 +137,146 @@ DonatedRaffleUi.prototype = {
         $('#stage').fadeOut(800).html('').show();
     },
     showRaffleTitle: function (title) {
-        var titleEl = $('#prize');
+        let titleEl = $('#prize');
         if (!titleEl.length) {
-            titleEl = $('<h1>').attr('id', 'prize').hide();
+            titleEl = $('<h1>').addClass('green').addClass('accent-2').attr('id', 'prize').hide();
             $('#stage').append(titleEl);
         }
 
         if (titleEl && titleEl.is(':visible')) {
-            titleEl.fadeOut(500);
+            titleEl.fadeOut(100);
         }
-        titleEl.html(title).fadeIn(800);
+        titleEl.html(title).fadeIn(200);
     },
-    showWinner: function () {
-        if (this.winners.length) {
-            if (this.settings.IsCurrencyGiveaway && parseInt(this.settings.CurrencyGiveawayAmount) > 0) {
-                // this.makeItRain();
-            }
+    showNewEntry: function (entry) {
+        let entryCollection = this.getEntryCollection();
 
-            var winner = $('<h2>').html(this.winners.shift().winner);
-            console.log(this.winners);
-            $('.background', $('#stage')).append(winner);
-            $(winner).fadeIn(600);
-            setTimeout($.proxy(function () {
-                $('#stage').children('.background h2').fadeOut(600).remove();
-            }, this), 5000);
+        entry.hide();
+        entryCollection.append(entry);
+
+        if ($('li', entryCollection).length > parseInt(this.settings.Overlay_RowsVisible)) {
+            let firstChild = $('li:first-child', entryCollection);
+            firstChild.animate({ opacity: 0, marginTop: (firstChild.outerHeight() * -1) + 'px' }, 200, 'linear', function () {
+                firstChild.remove();
+            });
         }
+
+        $('li:last-child', entryCollection).fadeIn(100);
     },
     showWinners: function () {
-        console.log(this.winnerInterval);
-        console.log(typeof this.winnerInterval);
-        if (typeof this.winnerInterval === "undefined" || this.winnerInterval === null) {
-            this.showWinner();
-            this.winnerInterval = setInterval($.proxy(this.showWinner, this), 7000);
+        if (!this.displayingWinners && this.winners.length) {
+            this.displayingWinners = true;
+
+            if ($('#stage').is(':hidden')) {
+                $('#stage').show();
+            }
+
+            let that = this;
+            if (
+                this.settings.Overlay_ShowRainingMoney &&
+                this.settings.IsCurrencyGiveaway &&
+                parseInt(this.settings.CurrencyGiveawayAmount) > 0
+            ) {
+                this.makeItRain();
+            }
+
+            if (!$('#stage').hasClass('valign-wrapper')) {
+                $('#stage').addClass('valign-wrapper');
+            }
+
+            let winner = $('<h2>').addClass('center-align')
+                .addClass('grey-text')
+                .addClass('text-lighten-5')
+                .html(this.winners.shift().winner)
+                .hide(),
+                isLastWinner = this.winners.length === 0;
+
+            $('#stage').append(winner);
+            $(winner).fadeIn(parseFloat(that.settings.Overlay_WinnerFadeTime) * 1000, function () {
+                setTimeout($.proxy(function () {
+                $('#stage').children('h2')
+                    .fadeOut(parseFloat(that.settings.Overlay_WinnerFadeTime) * 1000, function () {
+                        this.remove();
+                        if (isLastWinner) {
+                            $('#stage').removeClass('valign-wrapper');
+                        }
+                        that.displayingWinners = false;
+                        that.showWinners();
+                    });
+                }, this), parseFloat(that.settings.Overlay_WinnerDisplayTime) * 1000);
+            });
         }
     },
     winnerChosen: function (data) {
         this.winners.push(data);
-        //this.showWinners();
-        console.log(this.winners);
+        this.showWinners();
     },
     userEntered: function (data) {
-        var entryCollection = $('#entryCollection');
-        if (!entryCollection.length) {
-            entryCollection = $('<ul class="collection"></ul>').attr('id', 'entryCollection');
-            $('#stage').append(entryCollection);
-        }
-
-        var winner = $('<li>').addClass('collection-item')
+        let entry = $('<li>').addClass('collection-item')
             .append($('<span class="user">').html(data.user))
             .append($('<span>').addClass('badge').addClass('entries').attr('data-badge-caption', 'entries').html(data.entries));
-        entryCollection.append(winner);
 
-        if (entryCollection.is(':hidden')) {
-            entryCollection.fadeIn(500);
-        }
-
-        if ($('li', entryCollection).length > parseInt(this.settings.UI_RowsVisible)) {
-            $('li:first-child', entryCollection).fadeOut(400).remove();
-            $('li:last-child', entryCollection).fadeIn(600);
-        }
+        this.showNewEntry(entry);
     },
     userDonated: function (data) {
-        var entryCollection = $('#entryCollection');
-        if (!entryCollection.length) {
-            entryCollection = $('<ul class="collection"></ul>').attr('id', 'entryCollection');
-            $('#stage').append(entryCollection);
-        }
-
-        var winner = $('<li>').addClass('collection-item')
+        let entry = $('<li>').addClass('collection-item')
             .append($('<span class="user">').html(data.user))
             .append($('<span>').addClass('badge').addClass('entries').attr('data-badge-caption', 'entries').html(data.entries))
             .append($('<span>').addClass('badge').addClass('donation').attr('data-badge-caption', 'donated').html(data.donator));
-        entryCollection.append(winner);
 
-        if (entryCollection.is(':hidden')) {
-            entryCollection.fadeIn(500);
-        }
-
-        if ($('li', entryCollection).length > parseInt(this.settings.UI_RowsVisible)) {
-            $('li:first-child', entryCollection).fadeOut(400).remove();
-            $('li:last-child', entryCollection).fadeIn(600);
-        }
+        this.showNewEntry(entry);
     },
 
     updateSettings: function (settings) {
         this.settings = settings;
+    },
+
+    sendDebugEvents: function () {
+        let that = this;
+        new Promise((resolve, reject) => {
+            that.raffleOpened({ prize: '1,000,000 Currency Giveaway' });
+            setTimeout(resolve, 400);
+        }).then(() => {
+            return new Promise((resolve, reject) => {
+                that.userEntered({ user: 'BleepBlamBleep', entries: 1 });
+                setTimeout(resolve, 500);
+            });
+        }).then(() => {
+            return new Promise((resolve, reject) => {
+                that.userDonated({ user: 'Dolphin311983', donator: 'BleepBlamBleep', entries: 1 });
+                setTimeout(resolve, 500);
+            });
+        }).then(() => {
+            return new Promise((resolve, reject) => {
+                that.userDonated({ user: 'Cherry_X0', donator: 'SyntaxSe7en', entries: 1 });
+                setTimeout(resolve, 500);
+            });
+        }).then(() => {
+            return new Promise((resolve, reject) => {
+                that.userEntered({ user: 'SyntaxSe7en', entries: 1 });
+                setTimeout(resolve, 500);
+            });
+        }).then(() => {
+            return new Promise((resolve, reject) => {
+                that.userEntered({ user: 'MrUniverse08', entries: 1 });
+                setTimeout(resolve, 1000);
+            });
+        }).then(() => {
+            return new Promise((resolve, reject) => {
+                that.raffleClosed();
+                setTimeout(resolve, 1000);
+            });
+        }).then(() => {
+            return new Promise((resolve, reject) => {
+                that.winnerChosen({winner: 'Cherry_X0', entriesUsed: 1});
+                that.winnerChosen({winner: 'SyntaxSe7en', entriesUsed: 1});
+                that.winnerChosen({winner: 'Dolphin311983', entriesUsed: 1});
+                that.winnerChosen({winner: 'MrUniverse08', entriesUsed: 1});
+                setTimeout(resolve, 12000);
+            });
+        }).then(() => {
+            that.winnerChosen({winner: 'xLethalChicax', entriesUsed: 1});
+        });
     }
 };
 

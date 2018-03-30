@@ -342,12 +342,75 @@
     "tooltip": "Keyword used to load a raffle snapshot",
     "group": "Management"
   },
-  "UI_RowsVisible": {
+  "Overlay_DisplayRaffleOpen": {
+    "type": "checkbox",
+    "value": true,
+    "label": "Show Raffle Title When Open",
+    "tooltip": "Display raffle title above entrant list",
+    "group": "Overlay"
+  },
+  "Overlay_DisplayRaffleEntries": {
+    "type": "checkbox",
+    "value": true,
+    "label": "Show Raffle Entries",
+    "tooltip": "As users enter, show their name in the list in the overlay",
+    "group": "Overlay"
+  },
+  "Overlay_DisplayWinners": {
+    "type": "checkbox",
+    "value": true,
+    "label": "Show Winners Animation",
+    "tooltip": "Show winners chosen for raffle",
+    "group": "Overlay"
+  },
+  "Overlay_RowsVisible": {
     "type": "numberbox",
     "value": 4,
     "label": "Number of Rows Visible",
     "tooltip": "Only show this many items in the list at once (others will be rotated out)",
-    "group": "UI Settings"
+    "group": "Overlay"
+  },
+  "Overlay_ShowRainingMoney": {
+    "type": "checkbox",
+    "value": true,
+    "label": "Show Raining Money For Winners",
+    "tooltip": "If raffle was a currency giveaway, 'make it rain' currency",
+    "group": "Overlay"
+  },
+  "Overlay_NumberOfBills": {
+    "type": "numberbox",
+    "value": 25,
+    "label": "Number of Bills",
+    "tooltip": "Number of bills to drop with winner display if currency giveaway",
+    "group": "Overlay"
+  },
+  "Overlay_CurrencyFallSpeed": {
+    "type": "numberbox",
+    "value": 3,
+    "label": "Currency Fall Speed",
+    "tooltip": "Adjust how long it takes for a bill to fall down the screen",
+    "group": "Overlay"
+  },
+  "Overlay_CurrencyFallDelay": {
+    "type": "numberbox",
+    "value": 2,
+    "label": "Currency Fall Delay",
+    "tooltip": "Adjust length of delay before bill starts falling down the screen",
+    "group": "Overlay"
+  },
+  "Overlay_WinnerDisplayTime": {
+    "type": "textbox",
+    "value": 2.5,
+    "label": "Winner Display Time (seconds)",
+    "tooltip": "How long a winner's name is displayed before disappearing",
+    "group": "Overlay"
+  },
+  "Overlay_WinnerFadeTime": {
+    "type": "textbox",
+    "value": 0.6,
+    "label": "Winner Fade Time (seconds)",
+    "tooltip": "How long it takes a winner's name to appear / disappear",
+    "group": "Overlay"
   },
   "Button_OpenRaffle": {
     "type": "button",

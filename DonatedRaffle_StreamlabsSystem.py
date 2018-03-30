@@ -150,7 +150,16 @@ class Settings:
             "Manage_SaveSnapshotKeyword": "save",
             "Manage_LoadSnapshotKeyword": "load",
 
-            "UI_RowsVisible": 4
+            "Overlay_DisplayRaffleOpen": True,
+            "Overlay_DisplayRaffleEntries": True,
+            "Overlay_DisplayWinners": True,
+            "Overlay_RowsVisible": 4,
+            "Overlay_ShowRainingMoney": True,
+            "Overlay_NumberOfBills": 25,
+            "Overlay_CurrencyFallSpeed": 3,
+            "Overlay_CurrencyFallDelay": 2,
+            "Overlay_WinnerDisplayTime": 2.5,
+            "Overlay_WinnerFadeTime": 0.6
         }.copy()
 
     def SaveSnapshot(self, key):
