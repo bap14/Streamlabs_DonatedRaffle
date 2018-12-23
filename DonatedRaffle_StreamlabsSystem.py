@@ -354,6 +354,7 @@ def DonateEntry(user, numEntries, target):
 def NormalizeUsername(name):
     if name[0] == '@':
         name = name[1:]
+    name = name.lower()
     return name
 
 def OpenRaffle():
