@@ -216,6 +216,14 @@ appear as separate messages in chat.
 
 # Version History
 
+## 0.0.1.3
+
+- Fix donated entries not being case insensitive
+
+## 0.0.1.2
+
+- Case sensitivity and other fixes
+
 ## 0.0.1.1
 
 - Add currency giveaway amount to winner notification(s)

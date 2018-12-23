@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "Streamlabs Chatbot Donated Raffle"
-!define PRODUCT_VERSION "0.0.1.2"
+!define PRODUCT_VERSION "0.0.1.3"
 !define PRODUCT_PUBLISHER "BleepBlamBleep"
 !define PRODUCT_WEB_SITE "https://github.com/bap14/Streamlabs_DonatedRaffle"
 

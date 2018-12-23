@@ -20,7 +20,7 @@ ScriptName = "Donated Raffle"
 Website = "https://github.com/bap14/Streamlabs_DonatedRaffle"
 Description = "Creates a raffle system that allows viewers to 'donate' chances to other viewers"
 Creator = "BleepBlamBleep"
-Version = "0.0.1.2"
+Version = "0.0.1.3"
 
 # ------------------------
 # Set Variables
